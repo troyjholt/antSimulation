@@ -9,9 +9,9 @@
 class Colony
 {
     public:
-        int size = 200;
+        int size = 500;
         int antHill[2] = {20, 20};//{((rand() % 1080) + 1),((rand() % 1920) + 1)};
-        Ant ant[200];
+        Ant ant[500];
         //sf::RectangleShape antRender;
         int getSize();
         void simulate(World &world);
@@ -26,7 +26,7 @@ Colony::Colony()
 {
     for(int i = 0; i < size; i++)
     {
-        ant[i].setPosition(antHill[0] + 25, antHill[1] + 25);
+        ant[i].setPosition(antHill[0] + 30, antHill[1] + 30);
     }
 } 
 

@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        if((elapsed.asSeconds() > 0.01) && start)
+        if(start)//(elapsed.asSeconds() > 0.01) && start)
         {
             window.clear();
             world->render(window);

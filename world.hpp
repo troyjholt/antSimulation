@@ -3,6 +3,10 @@
 #ifndef WORLD_HPP
 #define WORLD_HPP
 
+const float trailSize = 0.005f;
+const int tileSize = 4;
+const float foodTrail = 0.005f;
+
 class Tile
 {
     public:
@@ -59,9 +63,9 @@ class World
 {
     public:
         int amount = 10;
-        int tileSize = 2;
-        int width = 960; //480;
-        int height = 540;//270;
+        //int tileSize = 2;
+        int width = 1920 / tileSize; //960; //480;
+        int height = 1080 / tileSize; //540;//270;
         int food = 0;
         sf::Color gridColor = sf::Color(75,75,75);
         sf::Color foodColor = sf::Color(255,255,0);
@@ -160,16 +164,35 @@ void World::render(sf::RenderWindow &window)
             {
                 
                 grid[x][y].trender.setFillColor(sf::Color(255 * grid[x][y].homeIntensity,0,255 * grid[x][y].foodIntensity));
+                //grid[x][y].trender.setOutlineThickness(-1.f);
+                //grid[x][y].trender.setOutlineColor(sf::Color(0,0,0));
                 grid[x][y].trender.setSize(sf::Vector2f(tileSize,tileSize));
                 grid[x][y].trender.setPosition(x * tileSize, y * tileSize);
-                window.draw(grid[x][y].trender);
+                //window.draw(grid[x][y].trender);
             
-                if((grid[x][y].homeIntensity - 0.005) >= 0.0)
-                    grid[x][y].homeIntensity = grid[x][y].homeIntensity - 0.005;
-                if((grid[x][y].foodIntensity - 0.005) >= 0.0)
-                    grid[x][y].foodIntensity = grid[x][y].foodIntensity - 0.005;
-                if((grid[x][y].homeIntensity == 0.0) && (grid[x][y].foodIntensity == 0.0))
-                    grid[x][y].setType(0);
+                //std::cout << grid[x][y].foodIntensity << std::endl;
+
+                if((grid[x][y].homeIntensity - trailSize) >= 0.0)
+                    grid[x][y].homeIntensity = grid[x][y].homeIntensity - trailSize;
+                else
+                    grid[x][y].homeIntensity = 0.0;
+
+                if((grid[x][y].foodIntensity - foodTrail) >= 0.0)
+                    grid[x][y].foodIntensity = grid[x][y].foodIntensity - foodTrail;
+                else
+                    grid[x][y].foodIntensity = 0.0;
+
+                if((grid[x][y].homeIntensity <= 0.0) && (grid[x][y].foodIntensity <= 0.0))
+                {
+                        grid[x][y].homeIntensity = 0.0;
+                        grid[x][y].foodIntensity = 0.0;
+                        grid[x][y].setType(0);
+                        //std::cout << grid[x][y].foodIntensity << std::endl;
+                        //grid[x][y].homeIntensity = 0;
+                        //grid[x][y].foodIntensity = 0;
+                }
+                window.draw(grid[x][y].trender);
+                    
             }
         }
     }
