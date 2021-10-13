@@ -3,6 +3,7 @@
 Ant::Ant()
 {
     antTexture.loadFromFile("Assets/Graphics/ant.png");
+    antTexture.setSmooth(true);
     antSprite.setTexture(antTexture); 
     antSprite.setScale(0.025,0.025);
     antSprite.setRotation(angle);

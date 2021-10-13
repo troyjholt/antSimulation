@@ -65,13 +65,13 @@ int main(int argc, char *argv[])
             }
         }
 
-        if(start)//(elapsed.asSeconds() > 0.01) && start)
+        if((elapsed.asSeconds() > 0.05) && (start))
         {
             window.clear(sf::Color(225, 190, 160));
             world->draw(window);
             world->simulate();
 
-            //elapsed = clock.restart();
+            elapsed = clock.restart();
         }
 
         window.display();

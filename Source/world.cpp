@@ -10,8 +10,8 @@ World::World()
                 this->grid[x][y].type = 1; // wall
         }
     }
-    colPos.x = 2;
-    colPos.y = 2;
+    colPos.x = 100;
+    colPos.y = 100;
 
     for(int i = 0; i < antSize; i++)
     {
@@ -39,7 +39,8 @@ void World::draw(sf::RenderWindow &window)
 
     for(int i = 0; i < antSize; i++)
     {
-
+        this->ant[i].antSprite.setPosition(this->ant[i].pos.x * tileSize, this->ant[i].pos.y * tileSize);
+        this->ant[i].antSprite.setRotation(this->ant[i].angle);
         window.draw(this->ant[i].antSprite);
     }
 };
@@ -54,8 +55,8 @@ void World::antSimulate()
 {
     for(int i = 0; i < antSize; i++)
     {
-        sf::Vector2f pos = ant[i].getPos();
-        float angle = ant[i].getAngle();
+        sf::Vector2f pos = this->ant[i].getPos();
+        float angle = this->ant[i].getAngle();
 
         //antNextSpot(pos);
 
@@ -74,6 +75,8 @@ void World::antSimulate()
         int X = pos.x + x;
         int Y = pos.y + y;
         
+        //std::cout << X << ' ' << Y << std::endl;
+        
 
         if(this->grid[X][Y].type == 0)
         {
@@ -81,12 +84,17 @@ void World::antSimulate()
             pos.y = pos.y + y;
             this->ant[i].setPos(pos);
             this->ant[i].setAngle(angle);
+            this->ant[i].antSprite.setPosition(this->ant[i].pos);
+            this->ant[i].antSprite.setRotation(this->ant[i].angle);
             //antMove(X,Y);
         }
         else
         {
+
             angle = antReverse(angle);
             this->ant[i].setAngle(angle);
+            this->ant[i].antSprite.setPosition(this->ant[i].pos);
+            this->ant[i].antSprite.setRotation(this->ant[i].angle);
         }
     }
 }
@@ -100,37 +108,3 @@ float World::antReverse(float angle)
 
     return angle;
 }
-
-/* void World::antNextSpot(sf::Vector2f pos)
-{
-    float temp = rand() % 11 - 5;
-    angle = angle + temp; 
-    
-    if(angle > 360)
-        angle -= 360;
-    
-    if(angle < 0)
-        angle += 360;
-
-    float rad = angle / 57.2958;
-    float y = speed * cos(rad);
-    float x = speed * sin(rad);
-    int X = pos.x + x;
-    int Y = pos.y + y;
-
-    if(world.grid[X][Y].type == 0)
-    {
-        move(X,Y);
-    }
-    else
-    {
-        angle = reverse();
-        nextSpot(world);
-    }
-}
-
-void World::antMove(int X, int Y)
-{
-    pos.x = X;
-    pos.y = Y;
-} */
