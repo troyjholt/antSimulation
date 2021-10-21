@@ -7,7 +7,7 @@
 const int width = 256;//1024;
 const int height = 192;//768;
 const int tileSize = 4;
-const int antSize = 250;
+const int antSize = 50;
 
 /*-----------------------------------------------------------------------------
 ** THIS IS A WORLD CLASS CLASS
