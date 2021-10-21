@@ -70,8 +70,8 @@ void World::antSimulate()
             angle += 360;
 
         float rad = angle / 57.2958;
-        float y = 1.0f * cos(rad);
-        float x = 1.0f * sin(rad);
+        float x = 1.0f * cos(rad);
+        float y = 1.0f * sin(rad);
         int X = pos.x + x;
         int Y = pos.y + y;
         

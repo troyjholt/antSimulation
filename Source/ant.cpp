@@ -5,8 +5,9 @@ Ant::Ant()
     antTexture.loadFromFile("Assets/Graphics/ant.png");
     antTexture.setSmooth(true);
     antSprite.setTexture(antTexture); 
-    antSprite.setScale(0.025,0.025);
-    antSprite.setRotation(angle);
+    antSprite.setScale(0.2,0.2);
+    //antSprite.setRotation(angle);
+    antSprite.rotate(angle);
 }
 
 sf::Vector2f Ant::getPos()
@@ -22,6 +23,9 @@ float Ant::getAngle()
 void Ant::setAngle(float mAngle)
 {
     angle = mAngle;
+    //antSprite.setRotation(mAngle);
+    antSprite.rotate(mAngle);
+    //std::cout << angle << ' ' << mAngle << std::endl;
 }
 
 void Ant::setPos(sf::Vector2f mPos)
