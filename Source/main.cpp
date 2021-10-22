@@ -52,15 +52,13 @@ int main(int argc, char *argv[])
             if (event.type == sf::Event::Closed)
                 window.close();
 
-            if(event.type == sf::Event::MouseButtonPressed)
+            if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
             {
-                sf::Vector2i pos = sf::Mouse::getPosition(window);
-                std::cout << pos.x << ' ' << pos.y << std::endl;
                 if(bWall)
                 {
+                    sf::Vector2i pos = sf::Mouse::getPosition(window);
                     world->buildWalls(pos);
                 }
-                    
             }
 
             if(event.type == sf::Event::KeyPressed)
