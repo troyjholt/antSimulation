@@ -26,6 +26,7 @@ class World
 
         void antSimulate();
         float antReverse(float angle);
+        void buildWalls(sf::Vector2i pos);
 /*         void antNextSpot();
         void antMove(); */
 };

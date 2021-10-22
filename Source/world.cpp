@@ -55,6 +55,13 @@ void World::antSimulate()
 {
     for(int i = 0; i < antSize; i++)
     {
+        if(i == 0)
+        {
+            float xa = this->ant[i].antSprite.getOrigin().x;
+            float ya = this->ant[i].antSprite.getOrigin().y;
+            //std::cout << xa << ' ' << ya << std::endl;
+        }
+
         sf::Vector2f pos = this->ant[i].getPos();
         float angle = this->ant[i].getAngle();
 
@@ -107,4 +114,9 @@ float World::antReverse(float angle)
         angle +=360;
 
     return angle;
+}
+
+void World::buildWalls(sf::Vector2i pos)
+{
+    this->grid[pos.x / tileSize][pos.y / tileSize].type = 1;
 }

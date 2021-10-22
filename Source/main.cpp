@@ -18,6 +18,7 @@ const int TILE_NUMBER_Y = 960;
 const int SIZE = 2;
 int spot = 1;
 bool start = false;
+bool bWall = false;
 
 int main(int argc, char *argv[])
 {
@@ -51,6 +52,17 @@ int main(int argc, char *argv[])
             if (event.type == sf::Event::Closed)
                 window.close();
 
+            if(event.type == sf::Event::MouseButtonPressed)
+            {
+                sf::Vector2i pos = sf::Mouse::getPosition(window);
+                std::cout << pos.x << ' ' << pos.y << std::endl;
+                if(bWall)
+                {
+                    world->buildWalls(pos);
+                }
+                    
+            }
+
             if(event.type == sf::Event::KeyPressed)
             {
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
@@ -60,7 +72,16 @@ int main(int argc, char *argv[])
                 }
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
                 {
-                    
+                    if(bWall == false)
+                    {
+                        bWall = true;
+                        std::cout << "Wall building Activated" << std::endl;
+                    }
+                    else
+                    {
+                        bWall = false;
+                        std::cout << "Wall building Deactivated" << std::endl;
+                    }
                 }
             }
         }
