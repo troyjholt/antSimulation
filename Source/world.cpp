@@ -74,14 +74,14 @@ void World::pherSimulate()
         {
             if(this->grid[x][y].pherHome == true)
             {
-                if(this->grid[x][y].elapsed.asSeconds() < 15.0)
+                if((this->grid[x][y].elapsed.asSeconds() < 15.0) && (this->grid[x][y].pherHomeAmount > 0))
                 {
                     this->grid[x][y].shape.setFillColor(sf::Color(255, 0, 0,this->grid[x][y].pherHomeAmount));
                     this->grid[x][y].shape.setSize(sf::Vector2f(tileSize,tileSize));
                     this->grid[x][y].shape.setPosition(x * tileSize, y * tileSize);
                     //this->grid[x][y].pherHomeAmount--;
                 }
-                else if(this->grid[x][y].elapsed.asSeconds() > 15.0)
+                else if((this->grid[x][y].elapsed.asSeconds() > 15.0) && (this->grid[x][y].pherHomeAmount > 0))
                 {
                     this->grid[x][y].pherHomeAmount--;
                     this->grid[x][y].shape.setFillColor(sf::Color(255, 0, 0,this->grid[x][y].pherHomeAmount));
