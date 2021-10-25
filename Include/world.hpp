@@ -7,7 +7,7 @@
 const int width = 256;//1024;
 const int height = 192;//768;
 const int tileSize = 4;
-const int antSize = 50;
+const int antSize = 1;
 
 /*-----------------------------------------------------------------------------
 ** THIS IS A WORLD CLASS CLASS
@@ -19,12 +19,14 @@ class World
         //int colony[1] = {0};
         sf::Vector2f colPos;
         Ant ant[antSize];
+        sf::CircleShape nest;
 
         World();
         void simulate();
         void draw(sf::RenderWindow &window);
 
         void antSimulate();
+        void pherSimulate();
         float antReverse(float angle);
         void buildWalls(sf::Vector2i pos);
 /*         void antNextSpot();

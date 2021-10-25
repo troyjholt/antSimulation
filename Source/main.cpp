@@ -23,7 +23,7 @@ bool bWall = false;
 int main(int argc, char *argv[])
 {
     srand (time(NULL));
-    sf::RenderWindow window(vm, "Hello World", sf::Style::Default);
+    sf::RenderWindow window(vm, "Ant Simulation", sf::Style::Default);
 
     World* world = new World();//colony);
 

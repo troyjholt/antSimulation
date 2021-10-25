@@ -15,6 +15,16 @@ class Tile
         bool Walkable = true;
         int foodAmount = 0;
         sf::RectangleShape shape;
+
+        float toFoodAngle;
+        float toHomeAngle;
+        bool pherHome = false;
+        bool pherFood = false;
+        int pherHomeAmount = 0;
+        int pherFoodAmount = 0;
+
+        sf::Clock clock;
+        sf::Time elapsed;
 };
 
 #endif

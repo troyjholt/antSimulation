@@ -13,6 +13,8 @@ class Ant
         float angle = rand() % 360 + 1;
         float distance = 1.0f;
         float speed = 1.0f;
+        int amount = 500;
+        bool hasFood = false;
         sf::RectangleShape antRender;
         sf::Texture antTexture; 
         sf::Sprite antSprite;
