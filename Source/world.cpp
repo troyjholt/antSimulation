@@ -12,6 +12,7 @@ World::World()
     }
     colPos.x = 50;
     colPos.y = 50;
+    grid[50][50].type = 4;
 
     nest.setRadius(10.f);
     nest.setPosition((colPos.x - 2) * tileSize, (colPos.y - 2) * tileSize);
@@ -39,9 +40,41 @@ void World::draw(sf::RenderWindow &window)
                 window.draw(this->grid[x][y].shape);
                 //std::cout << x << ' ' << y << std::endl;
             }
+            else if(this->grid[x][y].type == 2)
+            {
+                this->grid[x][y].shape.setFillColor(sf::Color(0, 255, 0));
+                this->grid[x][y].shape.setSize(sf::Vector2f(tileSize,tileSize));
+                this->grid[x][y].shape.setPosition(x * tileSize, y * tileSize);
+                this->grid[x][y].hasFood = true;
+                this->grid[x][y].foodAmount = 50;
+                window.draw(this->grid[x][y].shape);
+            }
+            else if((this->grid[x][y].pherHome == true) && (this->grid[x][y].pherFood == true))
+            {
+                int alpha;
+                if(this->grid[x][y].pherFoodAmount > this->grid[x][y].pherHomeAmount)
+                {
+                    alpha = this->grid[x][y].pherFoodAmount;
+                }
+                else
+                {
+                    alpha = this->grid[x][y].pherHomeAmount;
+                }
+                this->grid[x][y].shape.setFillColor(sf::Color(this->grid[x][y].pherHomeAmount, 0, this->grid[x][y].pherFoodAmount,alpha));
+                this->grid[x][y].shape.setSize(sf::Vector2f(tileSize,tileSize));
+                this->grid[x][y].shape.setPosition(x * tileSize, y * tileSize);
+                window.draw(this->grid[x][y].shape);
+            }
             else if(this->grid[x][y].pherHome == true)
             {
                 this->grid[x][y].shape.setFillColor(sf::Color(255, 0, 0,this->grid[x][y].pherHomeAmount));
+                this->grid[x][y].shape.setSize(sf::Vector2f(tileSize,tileSize));
+                this->grid[x][y].shape.setPosition(x * tileSize, y * tileSize);
+                window.draw(this->grid[x][y].shape);
+            }
+            else if(this->grid[x][y].pherFood == true)
+            {
+                this->grid[x][y].shape.setFillColor(sf::Color(0, 0, 255,this->grid[x][y].pherFoodAmount));
                 this->grid[x][y].shape.setSize(sf::Vector2f(tileSize,tileSize));
                 this->grid[x][y].shape.setPosition(x * tileSize, y * tileSize);
                 window.draw(this->grid[x][y].shape);
@@ -59,14 +92,14 @@ void World::draw(sf::RenderWindow &window)
     window.draw(this->nest);
 };
 
-void World::simulate()
+void World::simulate(sf::Time elapsed)
 {
-    pherSimulate();
-    antSimulate();
+    pherSimulate(elapsed);
+    antSimulate(elapsed);
     //future objects simulate()
 }
 
-void World::pherSimulate()
+void World::pherSimulate(sf::Time elapsed)
 {
     for(int x = 0; x < width; x++)
     {
@@ -74,30 +107,57 @@ void World::pherSimulate()
         {
             if(this->grid[x][y].pherHome == true)
             {
-                if((this->grid[x][y].elapsed.asSeconds() < 15.0) && (this->grid[x][y].pherHomeAmount > 0))
+                float dif = elapsed.asSeconds() - this->grid[x][y].time.asSeconds();
+                //std::cout << elapsed.asSeconds() << ' ' << this->grid[x][y].time.asSeconds() << std::endl;
+                
+                if((dif < 15.0) && (this->grid[x][y].pherHomeAmount > 0))
                 {
-                    this->grid[x][y].shape.setFillColor(sf::Color(255, 0, 0,this->grid[x][y].pherHomeAmount));
+                    this->grid[x][y].shape.setFillColor(sf::Color(250, 0, 0,this->grid[x][y].pherHomeAmount));
                     this->grid[x][y].shape.setSize(sf::Vector2f(tileSize,tileSize));
                     this->grid[x][y].shape.setPosition(x * tileSize, y * tileSize);
                     //this->grid[x][y].pherHomeAmount--;
                 }
-                else if((this->grid[x][y].elapsed.asSeconds() > 15.0) && (this->grid[x][y].pherHomeAmount > 0))
+                else if((dif > 15.0) && (this->grid[x][y].pherHomeAmount > 0))
                 {
                     this->grid[x][y].pherHomeAmount--;
-                    this->grid[x][y].shape.setFillColor(sf::Color(255, 0, 0,this->grid[x][y].pherHomeAmount));
+                    this->grid[x][y].shape.setFillColor(sf::Color(250, 0, 0,this->grid[x][y].pherHomeAmount));
                     this->grid[x][y].shape.setSize(sf::Vector2f(tileSize,tileSize));
                     this->grid[x][y].shape.setPosition(x * tileSize, y * tileSize);
                 }
                 else
-                {
+                { 
                     this->grid[x][y].pherHome = false;
+                }
+            }
+            if(this->grid[x][y].pherFood == true)
+            {
+                float dif = elapsed.asSeconds() - this->grid[x][y].time.asSeconds();
+                //std::cout << elapsed.asSeconds() << ' ' << this->grid[x][y].time.asSeconds() << std::endl;
+                
+                if((dif < 15.0) && (this->grid[x][y].pherFoodAmount > 0))
+                {
+                    this->grid[x][y].shape.setFillColor(sf::Color(250, 0, 0,this->grid[x][y].pherFoodAmount));
+                    this->grid[x][y].shape.setSize(sf::Vector2f(tileSize,tileSize));
+                    this->grid[x][y].shape.setPosition(x * tileSize, y * tileSize);
+                    //this->grid[x][y].pherHomeAmount--;
+                }
+                else if((dif > 15.0) && (this->grid[x][y].pherFoodAmount > 0))
+                {
+                    this->grid[x][y].pherFoodAmount--;
+                    this->grid[x][y].shape.setFillColor(sf::Color(250, 0, 0,this->grid[x][y].pherFoodAmount));
+                    this->grid[x][y].shape.setSize(sf::Vector2f(tileSize,tileSize));
+                    this->grid[x][y].shape.setPosition(x * tileSize, y * tileSize);
+                }
+                else
+                { 
+                    this->grid[x][y].pherFood = false;
                 }
             }
         }
     }
 }
 
-void World::antSimulate()
+void World::antSimulate(sf::Time elapsed)
 {
     for(int i = 0; i < antSize; i++)
     {
@@ -129,9 +189,38 @@ void World::antSimulate()
         int Y = pos.y + y;
         
         //std::cout << X << ' ' << Y << std::endl;
-        
-
-        if(this->grid[X][Y].type == 0)
+        if((this->grid[X][Y].type == 4) && (this->ant[i].hasFood == true))
+        {
+            std::cout << "we made it" << std::endl;
+            pos.x = pos.x + x;
+            pos.y = pos.y + y;
+            this->ant[i].setPos(pos);
+            this->ant[i].hasFood = false;
+            this->ant[i].amount = 500;
+            angle = antReverse(angle);
+            this->ant[i].setAngle(angle);
+            this->ant[i].antSprite.setPosition(this->ant[i].pos);
+            this->ant[i].antSprite.setRotation(this->ant[i].angle);
+        }
+        else if((this->grid[X][Y].type == 0) && (this->ant[i].hasFood == true) && (this->grid[X][Y].pherHomeAmount > 0))
+        {
+            pos.x = pos.x + x;
+            pos.y = pos.y + y;
+            this->ant[i].setPos(pos);
+            this->ant[i].setAngle(this->grid[X][Y].toHomeAngle);
+            this->ant[i].antSprite.setPosition(this->ant[i].pos);
+            this->ant[i].antSprite.setRotation(this->ant[i].angle);
+        }
+        else if((this->grid[X][Y].type == 0) && (this->ant[i].hasFood == false) && (this->grid[X][Y].pherFoodAmount > 0))
+        {
+            pos.x = pos.x + x;
+            pos.y = pos.y + y;
+            this->ant[i].setPos(pos);
+            this->ant[i].setAngle(this->grid[X][Y].toFoodAngle);
+            this->ant[i].antSprite.setPosition(this->ant[i].pos);
+            this->ant[i].antSprite.setRotation(this->ant[i].angle);
+        }
+        else if((this->grid[X][Y].type == 0) || ((this->grid[X][Y].type == 4) && (this->ant[i].hasFood == false)))
         {
             pos.x = pos.x + x;
             pos.y = pos.y + y;
@@ -141,9 +230,17 @@ void World::antSimulate()
             this->ant[i].antSprite.setRotation(this->ant[i].angle);
             //antMove(X,Y);
         }
+        else if((this->grid[X][Y].type == 2) && (this->ant[i].hasFood == false))
+        {
+            this->ant[i].hasFood = true;
+            this->ant[i].amount = 500;
+            angle = antReverse(angle);
+            this->ant[i].setAngle(angle);
+            this->ant[i].antSprite.setPosition(this->ant[i].pos);
+            this->ant[i].antSprite.setRotation(this->ant[i].angle);
+        }
         else
         {
-
             angle = antReverse(angle);
             this->ant[i].setAngle(angle);
             this->ant[i].antSprite.setPosition(this->ant[i].pos);
@@ -154,16 +251,26 @@ void World::antSimulate()
         {
             this->ant[i].amount--;
             this->grid[X][Y].pherHome = true;
-            this->grid[X][Y].elapsed = this->grid[X][Y].clock.restart();
+            this->grid[X][Y].time = elapsed;
             this->grid[X][Y].toHomeAngle = antReverse(angle);
             if(this->ant[i].amount > 250)
                 this->grid[X][Y].pherHomeAmount = 250;
             else
                 this->grid[X][Y].pherHomeAmount = this->ant[i].amount;
         }
+        else if((this->ant[i].hasFood == true) && (this->ant[i].amount > 0) && (this->grid[X][Y].pherFoodAmount < this->ant[i].amount))
+        {
+            this->ant[i].amount--;
+            this->grid[X][Y].pherFood = true;
+            this->grid[X][Y].time = elapsed;
+            this->grid[X][Y].toFoodAngle = antReverse(angle);
+            if(this->ant[i].amount > 250)
+                this->grid[X][Y].pherFoodAmount = 250;
+            else
+                this->grid[X][Y].pherFoodAmount = this->ant[i].amount;
+        }
     }
 }
-
 
 float World::antReverse(float angle)
 {
@@ -177,4 +284,9 @@ float World::antReverse(float angle)
 void World::buildWalls(sf::Vector2i pos)
 {
     this->grid[pos.x / tileSize][pos.y / tileSize].type = 1;
+}
+
+void World::buildFood(sf::Vector2i pos)
+{
+    this->grid[pos.x / tileSize][pos.y / tileSize].type = 2;
 }

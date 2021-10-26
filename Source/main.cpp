@@ -19,6 +19,7 @@ const int SIZE = 2;
 int spot = 1;
 bool start = false;
 bool bWall = false;
+bool bFood = false;
 
 int main(int argc, char *argv[])
 {
@@ -42,9 +43,11 @@ int main(int argc, char *argv[])
     antSprite.setScale(0.05,0.05);
 
     sf::Clock clock;
+    sf::Clock clockHolder;
     while (window.isOpen())
     {
         sf::Time elapsed = clock.getElapsedTime();
+        
         sf::Event event;
 
         while (window.pollEvent(event))
@@ -58,6 +61,11 @@ int main(int argc, char *argv[])
                 {
                     sf::Vector2i pos = sf::Mouse::getPosition(window);
                     world->buildWalls(pos);
+                }
+                else if(bFood)
+                {
+                    sf::Vector2i pos = sf::Mouse::getPosition(window);
+                    world->buildFood(pos);
                 }
             }
 
@@ -81,14 +89,28 @@ int main(int argc, char *argv[])
                         std::cout << "Wall building Deactivated" << std::endl;
                     }
                 }
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num3))
+                {
+                    if(bFood == false)
+                    {
+                        bFood = true;
+                        std::cout << "Food building Activated" << std::endl;
+                    }
+                    else
+                    {
+                        bFood = false;
+                        std::cout << "Food building Deactivated" << std::endl;
+                    }
+                }
             }
         }
 
         if((elapsed.asSeconds() > 0.05) && (start))
         {
+            sf::Time timeHolder = clockHolder.getElapsedTime();
             window.clear(sf::Color(225, 190, 160));
             world->draw(window);
-            world->simulate();
+            world->simulate(timeHolder);
 
             elapsed = clock.restart();
         }

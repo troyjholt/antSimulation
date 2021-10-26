@@ -23,8 +23,8 @@ class Tile
         int pherHomeAmount = 0;
         int pherFoodAmount = 0;
 
-        sf::Clock clock;
-        sf::Time elapsed;
+        //sf::Clock clock;
+        sf::Time time;
 };
 
 #endif
