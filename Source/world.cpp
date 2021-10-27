@@ -161,13 +161,6 @@ void World::antSimulate(sf::Time elapsed)
 {
     for(int i = 0; i < antSize; i++)
     {
-        if(i == 0)
-        {
-            float xa = this->ant[i].antSprite.getOrigin().x;
-            float ya = this->ant[i].antSprite.getOrigin().y;
-            //std::cout << xa << ' ' << ya << std::endl;
-        }
-
         sf::Vector2f pos = this->ant[i].getPos();
         float angle = this->ant[i].getAngle();
 
@@ -204,21 +197,24 @@ void World::antSimulate(sf::Time elapsed)
         }
         else if((this->grid[X][Y].type == 0) && (this->ant[i].hasFood == true) && (this->grid[X][Y].pherHomeAmount > 0))
         {
+            temp = averageHomeAngle(X,Y);
             pos.x = pos.x + x;
             pos.y = pos.y + y;
             this->ant[i].setPos(pos);
-            this->ant[i].setAngle(this->grid[X][Y].toHomeAngle);
+            this->ant[i].setAngle(temp);
             this->ant[i].antSprite.setPosition(this->ant[i].pos);
-            this->ant[i].antSprite.setRotation(this->ant[i].angle);
+            this->ant[i].antSprite.setRotation(temp);
         }
         else if((this->grid[X][Y].type == 0) && (this->ant[i].hasFood == false) && (this->grid[X][Y].pherFoodAmount > 0))
         {
+            temp = averageFoodAngle(X,Y);
+            //std::cout << temp << ' ' <<  this->grid[X][Y].toFoodAngle << std::endl; 
             pos.x = pos.x + x;
             pos.y = pos.y + y;
             this->ant[i].setPos(pos);
-            this->ant[i].setAngle(this->grid[X][Y].toFoodAngle);
+            this->ant[i].setAngle(temp);
             this->ant[i].antSprite.setPosition(this->ant[i].pos);
-            this->ant[i].antSprite.setRotation(this->ant[i].angle);
+            this->ant[i].antSprite.setRotation(temp);
         }
         else if((this->grid[X][Y].type == 0) || ((this->grid[X][Y].type == 4) && (this->ant[i].hasFood == false)))
         {
@@ -272,6 +268,56 @@ void World::antSimulate(sf::Time elapsed)
     }
 }
 
+float World::averageFoodAngle(int x, int y)
+{
+    int sumOfWeight = 1;
+    int weightAngle = 1;
+    float ret = 0.0;
+
+    for(int row = -1; row <= 1; row++)
+        for(int col = -1; col <=1; col++)
+        {
+            if(this->grid[x + row][y + col].pherFood == true)
+            {
+                sumOfWeight = sumOfWeight + this->grid[x + row][y + col].pherFoodAmount;
+                weightAngle = weightAngle + this->grid[x + row][y + col].pherFoodAmount * this->grid[x + row][y + col].toFoodAngle;
+            }
+        }
+
+    //std::cout << "food pheromone " << weightAngle << " " << sumOfWeight << std::endl;
+    if((sumOfWeight > 0) && (weightAngle > 0))
+    {
+        ret = weightAngle / sumOfWeight;
+    }
+
+    return ret;
+}
+
+float World::averageHomeAngle(int x, int y)
+{
+    int sumOfWeight = 0;
+    int weightAngle = 0;
+    float ret = 0.0;
+
+    for(int row = -1; row <= 1; row++)
+        for(int col = -1; col <=1; col++)
+        {
+            if((this->grid[x + row][y + col].type == 0) && (this->grid[x + row][y + col].pherHome == true))
+            {
+                sumOfWeight = sumOfWeight + this->grid[x + row][y + col].pherHomeAmount;
+                weightAngle = weightAngle + this->grid[x + row][y + col].pherHomeAmount * this->grid[x + row][y + col].toHomeAngle;
+            }
+        }
+
+    //std::cout << "Home pheromone " << weightAngle << " " << sumOfWeight << std::endl;
+    if((sumOfWeight > 0) && (weightAngle > 0))
+    {
+        ret = weightAngle / sumOfWeight;
+    }
+
+    return ret;
+}
+
 float World::antReverse(float angle)
 {
     angle -= 180;
@@ -290,7 +336,7 @@ void World::buildWalls(sf::Vector2i pos, int brushSize)
         x = brushSize * -1;
         y = brushSize * -1;
 
-        std::cout << x << ' ' << y << std::endl;
+        //std::cout << x << ' ' << y << std::endl;
         for(x; x < brushSize; x++)
         {
             for(y; y < brushSize; y++)
@@ -301,26 +347,34 @@ void World::buildWalls(sf::Vector2i pos, int brushSize)
     }
     else
     {
-        this->grid[pos.x / tileSize][pos.y / tileSize].type = 1;
+        if(this->grid[pos.x / tileSize][pos.y / tileSize].type == 0)
+        {
+            this->grid[pos.x / tileSize][pos.y / tileSize].type = 1;
+        }
+        
     }
     
 }
 
 void World::buildFood(sf::Vector2i pos, int brushSize)
 {
-        int x;
+    int x;
     int y;
     if(brushSize > 1)
     {
         x = brushSize * -1;
         y = brushSize * -1;
 
-        std::cout << x << ' ' << y << std::endl;
+        //std::cout << x << ' ' << y << std::endl;
         for(x; x < brushSize; x++)
         {
             for(y; y < brushSize; y++)
             {
-                this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type = 2;
+                if(this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type == 0)
+                {
+                    this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type = 2;
+                }
+
             }
         }
     }

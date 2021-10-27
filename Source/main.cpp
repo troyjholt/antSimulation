@@ -76,8 +76,16 @@ int main(int argc, char *argv[])
             {
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
                 {
-                    start = true;
-                    std::cout << "Simulation started" << std::endl;
+                    if(start == false)
+                    {
+                        start = true;
+                        std::cout << "Simulation started" << std::endl;
+                    }
+                    else
+                    {
+                        start = false;
+                        std::cout << "Simulation stopped" << std::endl;
+                    }
                 }
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
                 {

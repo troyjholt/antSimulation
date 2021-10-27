@@ -7,7 +7,7 @@
 const int width = 256;//1024;
 const int height = 192;//768;
 const int tileSize = 4;
-const int antSize = 50;
+const int antSize = 5;
 
 /*-----------------------------------------------------------------------------
 ** THIS IS A WORLD CLASS CLASS
@@ -28,6 +28,8 @@ class World
         void antSimulate(sf::Time elapsed);
         void pherSimulate(sf::Time elapsed);
         float antReverse(float angle);
+        float averageFoodAngle(int x, int y);
+        float averageHomeAngle(int x, int y);
         void buildWalls(sf::Vector2i pos, int brushSize);
         void buildFood(sf::Vector2i pos, int brushSize);
 /*         void antNextSpot();
