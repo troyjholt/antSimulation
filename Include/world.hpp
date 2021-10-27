@@ -28,8 +28,8 @@ class World
         void antSimulate(sf::Time elapsed);
         void pherSimulate(sf::Time elapsed);
         float antReverse(float angle);
-        void buildWalls(sf::Vector2i pos);
-        void buildFood(sf::Vector2i pos);
+        void buildWalls(sf::Vector2i pos, int brushSize);
+        void buildFood(sf::Vector2i pos, int brushSize);
 /*         void antNextSpot();
         void antMove(); */
 };

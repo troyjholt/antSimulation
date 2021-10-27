@@ -191,7 +191,7 @@ void World::antSimulate(sf::Time elapsed)
         //std::cout << X << ' ' << Y << std::endl;
         if((this->grid[X][Y].type == 4) && (this->ant[i].hasFood == true))
         {
-            std::cout << "we made it" << std::endl;
+            //std::cout << "we made it" << std::endl;
             pos.x = pos.x + x;
             pos.y = pos.y + y;
             this->ant[i].setPos(pos);
@@ -281,12 +281,52 @@ float World::antReverse(float angle)
     return angle;
 }
 
-void World::buildWalls(sf::Vector2i pos)
+void World::buildWalls(sf::Vector2i pos, int brushSize)
 {
-    this->grid[pos.x / tileSize][pos.y / tileSize].type = 1;
+    int x;
+    int y;
+    if(brushSize > 1)
+    {
+        x = brushSize * -1;
+        y = brushSize * -1;
+
+        std::cout << x << ' ' << y << std::endl;
+        for(x; x < brushSize; x++)
+        {
+            for(y; y < brushSize; y++)
+            {
+                this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type = 1;
+            }
+        }
+    }
+    else
+    {
+        this->grid[pos.x / tileSize][pos.y / tileSize].type = 1;
+    }
+    
 }
 
-void World::buildFood(sf::Vector2i pos)
+void World::buildFood(sf::Vector2i pos, int brushSize)
 {
-    this->grid[pos.x / tileSize][pos.y / tileSize].type = 2;
+        int x;
+    int y;
+    if(brushSize > 1)
+    {
+        x = brushSize * -1;
+        y = brushSize * -1;
+
+        std::cout << x << ' ' << y << std::endl;
+        for(x; x < brushSize; x++)
+        {
+            for(y; y < brushSize; y++)
+            {
+                this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type = 2;
+            }
+        }
+    }
+    else
+    {
+        this->grid[pos.x / tileSize][pos.y / tileSize].type = 2;
+    }
+    //this->grid[pos.x / tileSize][pos.y / tileSize].type = 2;
 }

@@ -17,6 +17,9 @@ const int TILE_NUMBER_X = 540;
 const int TILE_NUMBER_Y = 960;
 const int SIZE = 2;
 int spot = 1;
+int maxSize = 20;
+int smallSize = 1;
+int brushSize = 10;
 bool start = false;
 bool bWall = false;
 bool bFood = false;
@@ -60,12 +63,12 @@ int main(int argc, char *argv[])
                 if(bWall)
                 {
                     sf::Vector2i pos = sf::Mouse::getPosition(window);
-                    world->buildWalls(pos);
+                    world->buildWalls(pos, brushSize);
                 }
                 else if(bFood)
                 {
                     sf::Vector2i pos = sf::Mouse::getPosition(window);
-                    world->buildFood(pos);
+                    world->buildFood(pos, brushSize);
                 }
             }
 
@@ -74,13 +77,14 @@ int main(int argc, char *argv[])
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
                 {
                     start = true;
-                    std::cout << "yup" << std::endl;
+                    std::cout << "Simulation started" << std::endl;
                 }
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
                 {
                     if(bWall == false)
                     {
                         bWall = true;
+                        bFood = false;
                         std::cout << "Wall building Activated" << std::endl;
                     }
                     else
@@ -94,6 +98,7 @@ int main(int argc, char *argv[])
                     if(bFood == false)
                     {
                         bFood = true;
+                        bWall = false;
                         std::cout << "Food building Activated" << std::endl;
                     }
                     else
@@ -102,19 +107,40 @@ int main(int argc, char *argv[])
                         std::cout << "Food building Deactivated" << std::endl;
                     }
                 }
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::LBracket) || sf::Keyboard::isKeyPressed(sf::Keyboard::RBracket))
+                {
+                    if(sf::Keyboard::isKeyPressed(sf::Keyboard::LBracket))
+                    {
+                        if(brushSize == smallSize)
+                            brushSize = smallSize;
+                        else
+                            brushSize--;
+                    }
+                        
+                    if(sf::Keyboard::isKeyPressed(sf::Keyboard::RBracket))
+                    {
+                        if(brushSize == maxSize)
+                            brushSize = maxSize;
+                        else
+                            brushSize++;
+                    }
+
+                    std::cout << "brushSize: " << brushSize << std::endl;
+
+                }
             }
         }
 
+        window.clear(sf::Color(225, 190, 160));
         if((elapsed.asSeconds() > 0.05) && (start))
         {
             sf::Time timeHolder = clockHolder.getElapsedTime();
-            window.clear(sf::Color(225, 190, 160));
-            world->draw(window);
+            //world->draw(window);
             world->simulate(timeHolder);
 
             elapsed = clock.restart();
         }
-
+        world->draw(window);
         window.display();
     }
 
