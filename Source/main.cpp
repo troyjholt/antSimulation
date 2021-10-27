@@ -23,6 +23,7 @@ int brushSize = 10;
 bool start = false;
 bool bWall = false;
 bool bFood = false;
+bool bErase = false;
 
 int main(int argc, char *argv[])
 {
@@ -60,16 +61,13 @@ int main(int argc, char *argv[])
 
             if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
             {
+                sf::Vector2i pos = sf::Mouse::getPosition(window);
                 if(bWall)
-                {
-                    sf::Vector2i pos = sf::Mouse::getPosition(window);
                     world->buildWalls(pos, brushSize);
-                }
                 else if(bFood)
-                {
-                    sf::Vector2i pos = sf::Mouse::getPosition(window);
                     world->buildFood(pos, brushSize);
-                }
+                else if(bErase)
+                    world->buildErase(pos, brushSize);
             }
 
             if(event.type == sf::Event::KeyPressed)
@@ -93,6 +91,7 @@ int main(int argc, char *argv[])
                     {
                         bWall = true;
                         bFood = false;
+                        bErase = false;
                         std::cout << "Wall building Activated" << std::endl;
                     }
                     else
@@ -107,12 +106,28 @@ int main(int argc, char *argv[])
                     {
                         bFood = true;
                         bWall = false;
+                        bErase = false;
                         std::cout << "Food building Activated" << std::endl;
                     }
                     else
                     {
                         bFood = false;
                         std::cout << "Food building Deactivated" << std::endl;
+                    }
+                }
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num4))
+                {
+                    if(bErase == false)
+                    {
+                        bErase = true;
+                        bFood = false;
+                        bWall = false;
+                        std::cout << "Erase Tool Activated" << std::endl;
+                    }
+                    else
+                    {
+                        bErase = false;
+                        std::cout << "Erase Tool Deactivated" << std::endl;
                     }
                 }
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::LBracket) || sf::Keyboard::isKeyPressed(sf::Keyboard::RBracket))

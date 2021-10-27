@@ -32,6 +32,7 @@ class World
         float averageHomeAngle(int x, int y);
         void buildWalls(sf::Vector2i pos, int brushSize);
         void buildFood(sf::Vector2i pos, int brushSize);
+        void buildErase(sf::Vector2i pos, int brushSize);
 /*         void antNextSpot();
         void antMove(); */
 };

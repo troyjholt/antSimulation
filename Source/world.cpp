@@ -35,14 +35,17 @@ void World::draw(sf::RenderWindow &window)
             if(this->grid[x][y].type == 1)
             {
                 this->grid[x][y].shape.setFillColor(sf::Color(80, 65, 50));
+                this->grid[x][y].shape.setOutlineColor(sf::Color(0, 0, 0));
+                this->grid[x][y].shape.setOutlineThickness(0);
                 this->grid[x][y].shape.setSize(sf::Vector2f(tileSize,tileSize));
                 this->grid[x][y].shape.setPosition(x * tileSize, y * tileSize);
                 window.draw(this->grid[x][y].shape);
-                //std::cout << x << ' ' << y << std::endl;
             }
             else if(this->grid[x][y].type == 2)
             {
                 this->grid[x][y].shape.setFillColor(sf::Color(0, 255, 0));
+                this->grid[x][y].shape.setOutlineColor(sf::Color(0, 0, 0, 50));
+                this->grid[x][y].shape.setOutlineThickness(-1);
                 this->grid[x][y].shape.setSize(sf::Vector2f(tileSize,tileSize));
                 this->grid[x][y].shape.setPosition(x * tileSize, y * tileSize);
                 this->grid[x][y].hasFood = true;
@@ -61,6 +64,8 @@ void World::draw(sf::RenderWindow &window)
                     alpha = this->grid[x][y].pherHomeAmount;
                 }
                 this->grid[x][y].shape.setFillColor(sf::Color(this->grid[x][y].pherHomeAmount, 0, this->grid[x][y].pherFoodAmount,alpha));
+                this->grid[x][y].shape.setOutlineColor(sf::Color(0, 0, 0, 50));
+                this->grid[x][y].shape.setOutlineThickness(-1);
                 this->grid[x][y].shape.setSize(sf::Vector2f(tileSize,tileSize));
                 this->grid[x][y].shape.setPosition(x * tileSize, y * tileSize);
                 window.draw(this->grid[x][y].shape);
@@ -68,6 +73,8 @@ void World::draw(sf::RenderWindow &window)
             else if(this->grid[x][y].pherHome == true)
             {
                 this->grid[x][y].shape.setFillColor(sf::Color(255, 0, 0,this->grid[x][y].pherHomeAmount));
+                this->grid[x][y].shape.setOutlineColor(sf::Color(0, 0, 0, 50));
+                this->grid[x][y].shape.setOutlineThickness(-1);
                 this->grid[x][y].shape.setSize(sf::Vector2f(tileSize,tileSize));
                 this->grid[x][y].shape.setPosition(x * tileSize, y * tileSize);
                 window.draw(this->grid[x][y].shape);
@@ -75,6 +82,8 @@ void World::draw(sf::RenderWindow &window)
             else if(this->grid[x][y].pherFood == true)
             {
                 this->grid[x][y].shape.setFillColor(sf::Color(0, 0, 255,this->grid[x][y].pherFoodAmount));
+                this->grid[x][y].shape.setOutlineColor(sf::Color(0, 0, 0, 50));
+                this->grid[x][y].shape.setOutlineThickness(-1);
                 this->grid[x][y].shape.setSize(sf::Vector2f(tileSize,tileSize));
                 this->grid[x][y].shape.setPosition(x * tileSize, y * tileSize);
                 window.draw(this->grid[x][y].shape);
@@ -334,11 +343,10 @@ void World::buildWalls(sf::Vector2i pos, int brushSize)
     if(brushSize > 1)
     {
         x = brushSize * -1;
-        y = brushSize * -1;
 
-        //std::cout << x << ' ' << y << std::endl;
         for(x; x < brushSize; x++)
         {
+            y = brushSize * -1;
             for(y; y < brushSize; y++)
             {
                 this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type = 1;
@@ -351,7 +359,6 @@ void World::buildWalls(sf::Vector2i pos, int brushSize)
         {
             this->grid[pos.x / tileSize][pos.y / tileSize].type = 1;
         }
-        
     }
     
 }
@@ -363,24 +370,50 @@ void World::buildFood(sf::Vector2i pos, int brushSize)
     if(brushSize > 1)
     {
         x = brushSize * -1;
-        y = brushSize * -1;
+        
 
         //std::cout << x << ' ' << y << std::endl;
         for(x; x < brushSize; x++)
         {
+            y = brushSize * -1;
             for(y; y < brushSize; y++)
             {
                 if(this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type == 0)
                 {
                     this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type = 2;
                 }
-
             }
         }
     }
     else
     {
         this->grid[pos.x / tileSize][pos.y / tileSize].type = 2;
+    }
+    //this->grid[pos.x / tileSize][pos.y / tileSize].type = 2;
+}
+
+void World::buildErase(sf::Vector2i pos, int brushSize)
+{
+    int x;
+    int y;
+    if(brushSize > 1)
+    {
+        x = brushSize * -1;
+        
+
+        //std::cout << x << ' ' << y << std::endl;
+        for(x; x < brushSize; x++)
+        {
+            y = brushSize * -1;
+            for(y; y < brushSize; y++)
+            {
+                this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type = 0;
+            }
+        }
+    }
+    else
+    {
+        this->grid[pos.x / tileSize][pos.y / tileSize].type = 0;
     }
     //this->grid[pos.x / tileSize][pos.y / tileSize].type = 2;
 }
