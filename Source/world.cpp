@@ -103,8 +103,8 @@ void World::draw(sf::RenderWindow &window)
 
 void World::simulate(sf::Time elapsed)
 {
-    pherSimulate(elapsed);
     antSimulate(elapsed);
+    pherSimulate(elapsed);
     //future objects simulate()
 }
 
@@ -170,6 +170,7 @@ void World::antSimulate(sf::Time elapsed)
 {
     for(int i = 0; i < antSize; i++)
     {
+
         sf::Vector2f pos = this->ant[i].getPos();
         float angle = this->ant[i].getAngle();
 
