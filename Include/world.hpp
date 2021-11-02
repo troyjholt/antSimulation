@@ -3,6 +3,7 @@
 
 #include "tile.hpp"
 #include "ant.hpp"
+#include <SFML/System/Vector2.hpp>
 
 const int width = 256;//1024;
 const int height = 192;//768;
@@ -30,6 +31,8 @@ class World
         float antReverse(float angle);
         float averageFoodAngle(int x, int y);
         float averageHomeAngle(int x, int y);
+        void determineSpot(float angle, Ant &A);
+        bool pherCheck(sf::Vector2f pos, bool food);
         void buildWalls(sf::Vector2i pos, int brushSize);
         void buildFood(sf::Vector2i pos, int brushSize);
         void buildErase(sf::Vector2i pos, int brushSize);

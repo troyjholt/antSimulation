@@ -168,15 +168,31 @@ void World::pherSimulate(sf::Time elapsed)
 
 void World::antSimulate(sf::Time elapsed)
 {
+    float tempAngle;
+
     for(int i = 0; i < antSize; i++)
     {
+        if(pherCheck(this->ant[i].pos, this->ant[i].hasFood) == true)
+            tempAngle = averageHomeAngle(this->ant[i].pos.x, this->ant[i].pos.y);
+        else
+            tempAngle = this->ant[i].angle;
 
+        determineSpot(tempAngle, this->ant[i]);
+        //this->ant[i].setPos(tempPos);
+        //this->ant[i].antSprite.setPosition(this->ant[i].pos);
+        //this->ant[i].antSprite.setRotation(this->ant[i].angle);
+
+
+            
+
+//----------------------made it here--------------//
+
+
+        
+       /*  float temp = rand() % 11 - 5;
         sf::Vector2f pos = this->ant[i].getPos();
-        float angle = this->ant[i].getAngle();
+        //float angle = this->ant[i].getAngle();
 
-        //antNextSpot(pos);
-
-        float temp = rand() % 11 - 5;
         angle = angle + temp; 
         
         if(angle > 360)
@@ -185,14 +201,19 @@ void World::antSimulate(sf::Time elapsed)
         if(angle < 0)
             angle += 360;
 
-        float rad = angle / 57.2958;
+        this->ant[i].setAngle(angle); */
+
+
+        
+        
+        /* float rad = angle / 57.2958;
         float x = 1.0f * cos(rad);
         float y = 1.0f * sin(rad);
         int X = pos.x + x;
-        int Y = pos.y + y;
+        int Y = pos.y + y; */
         
         //std::cout << X << ' ' << Y << std::endl;
-        if((this->grid[X][Y].type == 4) && (this->ant[i].hasFood == true))
+        /* if((this->grid[X][Y].type == 4) && (this->ant[i].hasFood == true))
         {
             //std::cout << "we made it" << std::endl;
             pos.x = pos.x + x;
@@ -274,8 +295,87 @@ void World::antSimulate(sf::Time elapsed)
                 this->grid[X][Y].pherFoodAmount = 250;
             else
                 this->grid[X][Y].pherFoodAmount = this->ant[i].amount;
-        }
+        } */
     }
+}
+
+bool World::pherCheck(sf::Vector2f pos, bool food)
+{
+    int x = pos.x;
+    int y = pos.y;
+
+    if(food == true)
+    {
+        for(int row = -2; row <= 2; row++)
+            for(int col = -2; col <=2; col++)
+                if(this->grid[x + row][y + col].pherHome == true)
+                    return true;
+
+        return false;
+    }
+    else
+    {
+        for(int row = -2; row <= 2; row++)
+            for(int col = -2; col <=2; col++)
+                if(this->grid[x + row][y + col].pherFood == true)
+                    return true;
+
+        return false;
+    }
+}
+
+void World::determineSpot(float angle, Ant &A)
+{
+    float temp = rand() % 11 - 5;
+    sf::Vector2f pos = A.getPos();
+    angle = angle + temp; 
+        
+    if(angle > 360)
+        angle -= 360;
+    if(angle < 0)
+        angle += 360;
+
+    float rad = angle / 57.2958;
+    float x = 1.0f * cos(rad);
+    float y = 1.0f * sin(rad);
+    int X = pos.x + x;
+    int Y = pos.y + y;
+
+    if(this->grid[X][Y].type == 0) // spot is open
+    {
+        pos.x = X;
+        pos.y = Y;
+    }
+    else if(this->grid[X][Y].type == 1) // spot is a wall
+    {
+        angle = antReverse(angle);
+        determineSpot(angle, A);
+    }
+    else if(this->grid[X][Y].type == 2) // spot is food
+    {
+        if(A.hasFood == false)
+        {
+            A.hasFood = true;
+            A.amount = 500;
+        }
+        angle = antReverse(angle);
+        determineSpot(angle, A);
+
+    }
+    else if(this->grid[X][Y].type == 4) // spot is nest
+    {
+        if(A.hasFood == true)
+        {
+            A.hasFood = false;
+            A.amount = 500;
+        }
+        angle = antReverse(angle);
+        determineSpot(angle, A);
+    }
+    A.setAngle(angle);
+    A.setPos(pos);
+    A.antSprite.setPosition(A.pos);
+    A.antSprite.setRotation(angle);
 }
 
 float World::averageFoodAngle(int x, int y)
@@ -284,8 +384,8 @@ float World::averageFoodAngle(int x, int y)
     int weightAngle = 1;
     float ret = 0.0;
 
-    for(int row = -1; row <= 1; row++)
-        for(int col = -1; col <=1; col++)
+    for(int row = -2; row <= 2; row++)
+        for(int col = -2; col <=2; col++)
         {
             if(this->grid[x + row][y + col].pherFood == true)
             {
@@ -309,8 +409,8 @@ float World::averageHomeAngle(int x, int y)
     int weightAngle = 0;
     float ret = 0.0;
 
-    for(int row = -1; row <= 1; row++)
-        for(int col = -1; col <=1; col++)
+    for(int row = -2; row <= 2; row++)
+        for(int col = -2; col <=2; col++)
         {
             if((this->grid[x + row][y + col].type == 0) && (this->grid[x + row][y + col].pherHome == true))
             {
