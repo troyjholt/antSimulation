@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
             if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
             {
                 sf::Vector2i pos = sf::Mouse::getPosition(window);
-                //std::cout << pos.x << " " << pos.y << std::endl;
+                std::cout << pos.x << " " << pos.y << std::endl;
 /*                 if((pos.x /tileSize) > width)
                     pos.x = width * tileSize;
                 if((pos.y/tileSize) > height)

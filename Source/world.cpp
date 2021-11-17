@@ -10,9 +10,11 @@ World::World()
                 this->grid[x][y].type = 1; // wall
         }
     }
-    colPos.x = 50;
-    colPos.y = 50;
-    grid[50][50].type = 4;
+    int x = 50;
+    int y = 50;
+    colPos.x = x;
+    colPos.y = y;
+    grid[x][y].type = 4;
 
     nest.setRadius(7.f);
     nest.setPosition((colPos.x - 2) * tileSize, (colPos.y - 2) * tileSize);
@@ -453,7 +455,9 @@ void World::buildWalls(sf::Vector2i pos, int brushSize)
             //std::cout << pos.x << ' ' << pos.y << std::endl;
             for(y; y < brushSize; y++)
             {
-                if(((pos.x + x) < (width * tileSize)) && ((pos.y + y) < (height * tileSize)))
+                if(((pos.x + x) < (width * tileSize)) && 
+                  ((pos.y + y) < (height * tileSize)) &&
+                  ((pos.x + x) > 0) && ((pos.y + y) > 0))
                 {
                     this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type = 1; 
                 }
@@ -486,7 +490,9 @@ void World::buildFood(sf::Vector2i pos, int brushSize)
             y = brushSize * -1;
             for(y; y < brushSize; y++)
             {
-                if(((pos.x + x) < (width * tileSize)) && ((pos.y + y) < (height * tileSize)))
+                if(((pos.x + x) < (width * tileSize)) && 
+                  ((pos.y + y) < (height * tileSize)) &&
+                  ((pos.x + x) > 0) && ((pos.y + y) > 0))
                 {
                     this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type = 2; 
                 }
@@ -507,7 +513,6 @@ void World::buildErase(sf::Vector2i pos, int brushSize)
     if(brushSize > 1)
     {
         x = brushSize * -1;
-        
 
         //std::cout << x << ' ' << y << std::endl;
         for(x; x < brushSize; x++)
@@ -515,7 +520,9 @@ void World::buildErase(sf::Vector2i pos, int brushSize)
             y = brushSize * -1;
             for(y; y < brushSize; y++)
             {
-                if(((pos.x + x) < (width * tileSize)) && ((pos.y + y) < (height * tileSize)))
+                if(((pos.x + x) < (width * tileSize)) && 
+                  ((pos.y + y) < (height * tileSize)) &&
+                  ((pos.x + x) > 0) && ((pos.y + y) > 0))
                 {
                     this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type = 0; 
                 }
