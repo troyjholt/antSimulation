@@ -14,7 +14,7 @@ World::World()
     colPos.y = 50;
     grid[50][50].type = 4;
 
-    nest.setRadius(10.f);
+    nest.setRadius(7.f);
     nest.setPosition((colPos.x - 2) * tileSize, (colPos.y - 2) * tileSize);
     nest.setFillColor(sf::Color::Black);
 
@@ -170,14 +170,46 @@ void World::antSimulate(sf::Time elapsed)
 {
     for(int i = 0; i < antSize; i++)
     {
+        // decide where to move
+        // does ant have food
+            // is there home pheromones in area
+            // calculate for pheromones.
+        // is there food pheromones in area
+        // use angle determine next spot.
+            // is spot open
+                // go there
+            // is spot a wall
+                // reverse
+            // is spot food.
+                // grab food.
+                // reverse.
+        // move.
+
 
         sf::Vector2f pos = this->ant[i].getPos();
         float angle = this->ant[i].getAngle();
-
-        //antNextSpot(pos);
-
+        bool hasFood = this->ant[i].hasFood;
         float temp = rand() % 11 - 5;
-        angle = angle + temp; 
+        //float tempAngle;
+        if(pherCheck(ant[i]) == true)
+        {
+            if(hasFood)
+            {
+                angle = averageHomeAngle(this->ant[i].pos.x, this->ant[i].pos.y);
+            }
+            else
+            {
+                angle = averageFoodAngle(this->ant[i].pos.x, this->ant[i].pos.y);
+            }
+        }
+        
+        angle = angle + temp;
+
+
+        //angle = ((angle + tempAngle)/2) + temp;
+
+        
+        //angle = angle + temp; 
         
         if(angle > 360)
             angle -= 360;
@@ -185,13 +217,15 @@ void World::antSimulate(sf::Time elapsed)
         if(angle < 0)
             angle += 360;
 
+        //angle = 360;
+
         float rad = angle / 57.2958;
         float x = 1.0f * cos(rad);
         float y = 1.0f * sin(rad);
         int X = pos.x + x;
         int Y = pos.y + y;
         
-        //std::cout << X << ' ' << Y << std::endl;
+        std::cout << X << ' ' << Y << ' ' << ant[i].angle << std::endl;
         if((this->grid[X][Y].type == 4) && (this->ant[i].hasFood == true))
         {
             //std::cout << "we made it" << std::endl;
@@ -248,6 +282,7 @@ void World::antSimulate(sf::Time elapsed)
         else
         {
             angle = antReverse(angle);
+            //angle = antBounce(angle);
             this->ant[i].setAngle(angle);
             this->ant[i].antSprite.setPosition(this->ant[i].pos);
             this->ant[i].antSprite.setRotation(this->ant[i].angle);
@@ -276,6 +311,37 @@ void World::antSimulate(sf::Time elapsed)
                 this->grid[X][Y].pherFoodAmount = this->ant[i].amount;
         }
     }
+}
+
+bool World::pherCheck(Ant A)
+{
+    int x = A.pos.x;
+    int y = A.pos.y;
+
+    if(A.hasFood)
+    {
+        for(int row = -1; row <= 1; row++)
+            for(int col = -1; col <=1; col++)
+            {
+                if(this->grid[x + row][y + col].pherHome == true)
+                {
+                    return true;
+                }
+            }
+    }
+    else
+    {
+        for(int row = -1; row <= 1; row++)
+            for(int col = -1; col <=1; col++)
+            {
+                if(this->grid[x + row][y + col].pherFood == true)
+                {
+                    return true;
+                }
+            }
+    }
+
+    return false;
 }
 
 float World::averageFoodAngle(int x, int y)
@@ -328,6 +394,42 @@ float World::averageHomeAngle(int x, int y)
     return ret;
 }
 
+// does not work yet.
+float World::antBounce(float angle)
+{
+    //float angle = A.getAngle();
+
+    if((angle < 361) && (angle > 270))
+    {
+        angle = angle - 90;
+        if(angle < 0)
+            angle +=360;
+    }
+    else if((angle < 271) && (angle > 180))
+    {
+        angle = angle + 90;
+        if(angle > 360)
+            angle -= 360;
+    }
+    else if((angle < 181) && (angle > 90))
+    {
+        angle = angle - 90;
+        if(angle < 0)
+            angle +=360;
+    }
+    else if((angle < 91) && (angle > 0))
+    {
+        angle = angle + 90;
+        if(angle > 360)
+            angle -= 360;
+    }
+    return angle;
+/*     angle = angle + 90;
+    if(angle > 360)
+        angle -= 360;
+    return angle; */
+}
+
 float World::antReverse(float angle)
 {
     angle -= 180;
@@ -348,9 +450,14 @@ void World::buildWalls(sf::Vector2i pos, int brushSize)
         for(x; x < brushSize; x++)
         {
             y = brushSize * -1;
+            //std::cout << pos.x << ' ' << pos.y << std::endl;
             for(y; y < brushSize; y++)
             {
-                this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type = 1;
+                if(((pos.x + x) < (width * tileSize)) && ((pos.y + y) < (height * tileSize)))
+                {
+                    this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type = 1; 
+                }
+                          
             }
         }
     }
@@ -379,9 +486,9 @@ void World::buildFood(sf::Vector2i pos, int brushSize)
             y = brushSize * -1;
             for(y; y < brushSize; y++)
             {
-                if(this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type == 0)
+                if(((pos.x + x) < (width * tileSize)) && ((pos.y + y) < (height * tileSize)))
                 {
-                    this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type = 2;
+                    this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type = 2; 
                 }
             }
         }
@@ -408,7 +515,10 @@ void World::buildErase(sf::Vector2i pos, int brushSize)
             y = brushSize * -1;
             for(y; y < brushSize; y++)
             {
-                this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type = 0;
+                if(((pos.x + x) < (width * tileSize)) && ((pos.y + y) < (height * tileSize)))
+                {
+                    this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type = 0; 
+                }
             }
         }
     }

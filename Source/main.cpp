@@ -62,12 +62,20 @@ int main(int argc, char *argv[])
             if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
             {
                 sf::Vector2i pos = sf::Mouse::getPosition(window);
-                if(bWall)
-                    world->buildWalls(pos, brushSize);
-                else if(bFood)
-                    world->buildFood(pos, brushSize);
-                else if(bErase)
-                    world->buildErase(pos, brushSize);
+                //std::cout << pos.x << " " << pos.y << std::endl;
+/*                 if((pos.x /tileSize) > width)
+                    pos.x = width * tileSize;
+                if((pos.y/tileSize) > height)
+                    pos.y = height * tileSize; */
+                if((pos.x >= 0) && ((pos.x/tileSize) <= (width * tileSize)) && (pos.y >= 0) && ((pos.y/tileSize) <= (height * tileSize)))
+                {
+                    if(bWall)
+                        world->buildWalls(pos, brushSize);
+                    else if(bFood)
+                        world->buildFood(pos, brushSize);
+                    else if(bErase)
+                        world->buildErase(pos, brushSize);
+                }
             }
 
             if(event.type == sf::Event::KeyPressed)
@@ -149,7 +157,6 @@ int main(int argc, char *argv[])
                     }
 
                     std::cout << "brushSize: " << brushSize << std::endl;
-
                 }
             }
         }
