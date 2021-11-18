@@ -12,6 +12,7 @@ World::World()
     }
     int x = 50;
     int y = 50;
+    range = 8;
     colPos.x = x;
     colPos.y = y;
     grid[x][y].type = 4;
@@ -90,6 +91,14 @@ void World::draw(sf::RenderWindow &window)
                 this->grid[x][y].shape.setPosition(x * tileSize, y * tileSize);
                 window.draw(this->grid[x][y].shape);
             }
+            else if(this->grid[x][y].vision == true)
+            {
+                this->grid[x][y].shape.setFillColor(sf::Color::Yellow);
+                this->grid[x][y].shape.setSize(sf::Vector2f(tileSize,tileSize));
+                this->grid[x][y].shape.setPosition(x * tileSize, y * tileSize);
+                window.draw(this->grid[x][y].shape);
+                this->grid[x][y].vision = false;
+            }
         }
     }
 
@@ -97,11 +106,80 @@ void World::draw(sf::RenderWindow &window)
     {
         this->ant[i].antSprite.setPosition(this->ant[i].pos.x * tileSize, this->ant[i].pos.y * tileSize);
         this->ant[i].antSprite.setRotation(this->ant[i].angle);
+        if(sightD)
+            showVision(this->ant[i]);
         window.draw(this->ant[i].antSprite);
     }
 
     window.draw(this->nest);
 };
+
+void World::showVision(Ant A)
+{
+
+    int start_X = A.pos.x;//colPos.x; // center point
+    int start_Y = A.pos.y;//colPos.y;
+
+    int r = range;
+
+    float angle = A.angle;
+    float sAngle = A.angle - 45;
+    float eAngle = A.angle + 45;
+    
+    if(sAngle < 0)
+        sAngle+=360;
+    if(eAngle < sAngle)
+        eAngle+=360;
+    
+    double curCos = std::cos(sAngle);
+    double curSin = std::sin(sAngle);
+    double curTan = curSin/curCos;
+    double newCos = std::cos(eAngle);
+    double newSin = std::sin(eAngle);
+    double newTan = newSin/newCos;
+    double xMax = curCos*range;
+    double r2 = range*range;
+
+
+
+    for(int x = start_X - r; x < start_X + r; x++)
+    {
+        for(int y = start_Y - r; y < start_Y + r; y++)
+        {
+            float deltaX = x - start_X;
+            float deltaY = y - start_Y;
+            float num = atan2(deltaY,deltaX) * 180 / 3.14;
+            if((num < 0) || ((num < sAngle) && (num < eAngle)))
+                num +=360;
+            
+            //if(num > 360)
+             //   num -=360;
+
+            
+
+            if(((x-start_X)*(x-start_X) + (y-start_Y)*(y-start_Y) <= r*r) && 
+                (num > sAngle) && (num < eAngle) && 
+                (x > 0) && (x < width) && (y > 0) && (y < height))
+            {
+
+                //std::cout << "correct " << num << " " << sAngle << " " << eAngle << std::endl;
+                //std::cout << num << std::endl;
+                //float cos = x + range * std::cos(angle);
+                //float sin = y + range * std::sin(angle);
+                //float sector = ((3.14 * (range * range)) * (angle/360));
+                //std::cout << sector << std::endl;
+                //if(pow(3.1428571*r,2) * (angle/360))
+                //std::cout << cos << " " << sin << " " << x/range << " " << y/range << std::endl;
+                //if((cos == (x/range)) && (sin == (y/range)))
+                //if(x*x + y*y > r2)
+                //{
+                    //std::cout << pow(3.1428571*r,2) * (angle/360) << std::endl;
+                    this->grid[x][y].vision = true;
+                //}
+            }
+        }
+    }
+}
 
 void World::simulate(sf::Time elapsed)
 {
@@ -166,6 +244,59 @@ void World::pherSimulate(sf::Time elapsed)
             }
         }
     }
+
+    int start_X = colPos.x; // center point
+    int start_Y = colPos.y;
+
+    int r = range;
+
+    // current point
+    int x; 
+    int y;
+
+    for(int i = start_X - r; i < start_X + r; i++)
+    {
+        for(int j = start_Y - r; j < start_Y + r; j++)
+        {
+            if((i-start_X)*(i-start_X) + (j-start_Y)*(j-start_Y) <= r*r)
+            {
+                this->grid[i][j].pherHomeAmount = 500;
+                this->grid[i][j].pherHome = true;
+            }
+        }
+    }
+
+
+/*     for(int x = range * -1; x < range; x++)
+        for(int y = range * -1; y < range; y++)
+        {
+            if(((colPos.x + x) < (width * tileSize)) && 
+              ((colPos.y + y) < (height * tileSize)) &&
+              ((colPos.x + x) > 0) && ((colPos.y + y) > 0))
+            {
+                int row = colPos.x + x;
+                int col = colPos.y + y;
+                this->grid[row][col].pherHomeAmount = 500;
+                this->grid[row][col].pherHome = true;
+                int y2 = colPos.y + y;
+                int y1 = colPos.y;
+                int x2 = colPos.x + x;
+                int x1 = colPos.x;
+                float newAngle = atan2((y2 - y1), (x2 - x1)) * (180/3.14);
+                newAngle -= 180;
+                if(newAngle < 0)
+                    newAngle += 360;
+                else if(newAngle > 360)
+                    newAngle -= 360;
+                //std::cout << "here is atan2 " <<  newAngle << std::endl;
+                //if(((y2 - y1) != 0) && ((x2 - x1) != 0))
+                //{
+                    //float angle = (((y2 - y1)/(x2-x1)) * 180 / 3.14);
+                    this->grid[row][col].toHomeAngle = newAngle;//(((y2 - y1)/(x2-x1)) * 180 / 3.14);
+                    //std::cout << angle << std::endl;
+                //}
+            }
+        } */
 }
 
 void World::antSimulate(sf::Time elapsed)
@@ -227,7 +358,7 @@ void World::antSimulate(sf::Time elapsed)
         int X = pos.x + x;
         int Y = pos.y + y;
         
-        std::cout << X << ' ' << Y << ' ' << ant[i].angle << std::endl;
+        //std::cout << X << ' ' << Y << ' ' << ant[i].angle << std::endl;
         if((this->grid[X][Y].type == 4) && (this->ant[i].hasFood == true))
         {
             //std::cout << "we made it" << std::endl;
@@ -352,8 +483,8 @@ float World::averageFoodAngle(int x, int y)
     int weightAngle = 1;
     float ret = 0.0;
 
-    for(int row = -1; row <= 1; row++)
-        for(int col = -1; col <=1; col++)
+    for(int row = -2; row <= 2; row++)
+        for(int col = -2; col <=2; col++)
         {
             if(this->grid[x + row][y + col].pherFood == true)
             {
@@ -377,8 +508,8 @@ float World::averageHomeAngle(int x, int y)
     int weightAngle = 0;
     float ret = 0.0;
 
-    for(int row = -1; row <= 1; row++)
-        for(int col = -1; col <=1; col++)
+    for(int row = -2; row <= 2; row++)
+        for(int col = -2; col <=2; col++)
         {
             if((this->grid[x + row][y + col].type == 0) && (this->grid[x + row][y + col].pherHome == true))
             {
@@ -534,4 +665,12 @@ void World::buildErase(sf::Vector2i pos, int brushSize)
         this->grid[pos.x / tileSize][pos.y / tileSize].type = 0;
     }
     //this->grid[pos.x / tileSize][pos.y / tileSize].type = 2;
+}
+
+void World::sightDraw()
+{
+    if(sightD == false)
+        sightD = true;
+    else
+        sightD = false;
 }

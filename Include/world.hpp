@@ -3,11 +3,13 @@
 
 #include "tile.hpp"
 #include "ant.hpp"
+#include <cmath>
 
 const int width = 256;//1024;
 const int height = 192;//768;
 const int tileSize = 4;
-const int antSize = 1;
+const int antSize = 50;
+
 
 /*-----------------------------------------------------------------------------
 ** THIS IS A WORLD CLASS CLASS
@@ -20,6 +22,8 @@ class World
         sf::Vector2f colPos;
         Ant ant[antSize];
         sf::CircleShape nest;
+        int range;
+        bool sightD = false;
 
         World();
         void simulate(sf::Time elapsed);
@@ -35,6 +39,8 @@ class World
         void buildWalls(sf::Vector2i pos, int brushSize);
         void buildFood(sf::Vector2i pos, int brushSize);
         void buildErase(sf::Vector2i pos, int brushSize);
+        void showVision(Ant A);
+        void sightDraw();
 /*         void antNextSpot();
         void antMove(); */
 };

@@ -138,6 +138,10 @@ int main(int argc, char *argv[])
                         std::cout << "Erase Tool Deactivated" << std::endl;
                     }
                 }
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num5))
+                {
+                    world->sightDraw();
+                }
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::LBracket) || sf::Keyboard::isKeyPressed(sf::Keyboard::RBracket))
                 {
                     if(sf::Keyboard::isKeyPressed(sf::Keyboard::LBracket))
