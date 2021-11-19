@@ -23,6 +23,7 @@ class World
         Ant ant[antSize];
         sf::CircleShape nest;
         int range;
+        int rangeWidth;
         bool sightD = false;
 
         World();
@@ -32,8 +33,8 @@ class World
         void antSimulate(sf::Time elapsed);
         void pherSimulate(sf::Time elapsed);
         float antReverse(float angle);
-        float averageFoodAngle(int x, int y);
-        float averageHomeAngle(int x, int y);
+        float averageFoodAngle(Ant A);
+        float averageHomeAngle(Ant A);
         float antBounce(float angle);
         bool pherCheck(Ant A);
         void buildWalls(sf::Vector2i pos, int brushSize);

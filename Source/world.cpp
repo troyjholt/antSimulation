@@ -12,7 +12,8 @@ World::World()
     }
     int x = 50;
     int y = 50;
-    range = 8;
+    range = 10;
+    rangeWidth = 60;
     colPos.x = x;
     colPos.y = y;
     grid[x][y].type = 4;
@@ -107,7 +108,11 @@ void World::draw(sf::RenderWindow &window)
         this->ant[i].antSprite.setPosition(this->ant[i].pos.x * tileSize, this->ant[i].pos.y * tileSize);
         this->ant[i].antSprite.setRotation(this->ant[i].angle);
         if(sightD)
+        {
+            //std::cout << sightD << std::endl;
             showVision(this->ant[i]);
+        }
+            
         window.draw(this->ant[i].antSprite);
     }
 
@@ -123,8 +128,8 @@ void World::showVision(Ant A)
     int r = range;
 
     float angle = A.angle;
-    float sAngle = A.angle - 45;
-    float eAngle = A.angle + 45;
+    float sAngle = A.angle - rangeWidth;
+    float eAngle = A.angle + rangeWidth;
     
     if(sAngle < 0)
         sAngle+=360;
@@ -151,31 +156,12 @@ void World::showVision(Ant A)
             float num = atan2(deltaY,deltaX) * 180 / 3.14;
             if((num < 0) || ((num < sAngle) && (num < eAngle)))
                 num +=360;
-            
-            //if(num > 360)
-             //   num -=360;
-
-            
 
             if(((x-start_X)*(x-start_X) + (y-start_Y)*(y-start_Y) <= r*r) && 
-                (num > sAngle) && (num < eAngle) && 
-                (x > 0) && (x < width) && (y > 0) && (y < height))
+            (num > sAngle) && (num < eAngle) && 
+            (x > 0) && (x < width) && (y > 0) && (y < height))
             {
-
-                //std::cout << "correct " << num << " " << sAngle << " " << eAngle << std::endl;
-                //std::cout << num << std::endl;
-                //float cos = x + range * std::cos(angle);
-                //float sin = y + range * std::sin(angle);
-                //float sector = ((3.14 * (range * range)) * (angle/360));
-                //std::cout << sector << std::endl;
-                //if(pow(3.1428571*r,2) * (angle/360))
-                //std::cout << cos << " " << sin << " " << x/range << " " << y/range << std::endl;
-                //if((cos == (x/range)) && (sin == (y/range)))
-                //if(x*x + y*y > r2)
-                //{
-                    //std::cout << pow(3.1428571*r,2) * (angle/360) << std::endl;
                     this->grid[x][y].vision = true;
-                //}
             }
         }
     }
@@ -245,7 +231,7 @@ void World::pherSimulate(sf::Time elapsed)
         }
     }
 
-    int start_X = colPos.x; // center point
+/*     int start_X = colPos.x; // center point
     int start_Y = colPos.y;
 
     int r = range;
@@ -264,7 +250,7 @@ void World::pherSimulate(sf::Time elapsed)
                 this->grid[i][j].pherHome = true;
             }
         }
-    }
+    } */
 
 
 /*     for(int x = range * -1; x < range; x++)
@@ -328,11 +314,11 @@ void World::antSimulate(sf::Time elapsed)
         {
             if(hasFood)
             {
-                angle = averageHomeAngle(this->ant[i].pos.x, this->ant[i].pos.y);
+                angle = averageHomeAngle(ant[i]);
             }
             else
             {
-                angle = averageFoodAngle(this->ant[i].pos.x, this->ant[i].pos.y);
+                angle = averageFoodAngle(ant[i]);
             }
         }
         
@@ -358,7 +344,7 @@ void World::antSimulate(sf::Time elapsed)
         int X = pos.x + x;
         int Y = pos.y + y;
         
-        //std::cout << X << ' ' << Y << ' ' << ant[i].angle << std::endl;
+        
         if((this->grid[X][Y].type == 4) && (this->ant[i].hasFood == true))
         {
             //std::cout << "we made it" << std::endl;
@@ -374,7 +360,7 @@ void World::antSimulate(sf::Time elapsed)
         }
         else if((this->grid[X][Y].type == 0) && (this->ant[i].hasFood == true) && (this->grid[X][Y].pherHomeAmount > 0))
         {
-            temp = averageHomeAngle(X,Y);
+            temp = averageHomeAngle(ant[i]);
             pos.x = pos.x + x;
             pos.y = pos.y + y;
             this->ant[i].setPos(pos);
@@ -384,7 +370,7 @@ void World::antSimulate(sf::Time elapsed)
         }
         else if((this->grid[X][Y].type == 0) && (this->ant[i].hasFood == false) && (this->grid[X][Y].pherFoodAmount > 0))
         {
-            temp = averageFoodAngle(X,Y);
+            temp = averageFoodAngle(ant[i]);
             //std::cout << temp << ' ' <<  this->grid[X][Y].toFoodAngle << std::endl; 
             pos.x = pos.x + x;
             pos.y = pos.y + y;
@@ -443,12 +429,85 @@ void World::antSimulate(sf::Time elapsed)
             else
                 this->grid[X][Y].pherFoodAmount = this->ant[i].amount;
         }
+
+        //std::cout << X << ' ' << Y << ' ' << ant[i].angle << std::endl;
     }
 }
 
 bool World::pherCheck(Ant A)
 {
-    int x = A.pos.x;
+
+    int start_X = A.pos.x;//colPos.x; // center point
+    int start_Y = A.pos.y;//colPos.y;
+
+    int r = range;
+
+    float angle = A.angle;
+    float sAngle = A.angle - rangeWidth;
+    float eAngle = A.angle + rangeWidth;
+    
+    if(sAngle < 0)
+        sAngle+=360;
+    if(eAngle < sAngle)
+        eAngle+=360;
+    
+    double curCos = std::cos(sAngle);
+    double curSin = std::sin(sAngle);
+    double curTan = curSin/curCos;
+    double newCos = std::cos(eAngle);
+    double newSin = std::sin(eAngle);
+    double newTan = newSin/newCos;
+    double xMax = curCos*range;
+    double r2 = range*range;
+
+    if(A.hasFood)
+    {
+        for(int x = start_X - r; x < start_X + r; x++)
+        {
+            for(int y = start_Y - r; y < start_Y + r; y++)
+            {
+                float deltaX = x - start_X;
+                float deltaY = y - start_Y;
+                float num = atan2(deltaY,deltaX) * 180 / 3.14;
+                if((num < 0) || ((num < sAngle) && (num < eAngle)))
+                    num +=360;
+
+                if(((x-start_X)*(x-start_X) + (y-start_Y)*(y-start_Y) <= r*r) && 
+                    (num > sAngle) && (num < eAngle) && 
+                    (x > 0) && (x < width) && (y > 0) && (y < height))
+                {
+                        if((this->grid[x][y].pherHome == true) || (this->grid[x][y].type == 4))
+                            return true;
+                }
+            }
+        }
+    }
+    else
+    {
+        for(int x = start_X - r; x < start_X + r; x++)
+        {
+            for(int y = start_Y - r; y < start_Y + r; y++)
+            {
+                float deltaX = x - start_X;
+                float deltaY = y - start_Y;
+                float num = atan2(deltaY,deltaX) * 180 / 3.14;
+                if((num < 0) || ((num < sAngle) && (num < eAngle)))
+                    num +=360;
+
+                if(((x-start_X)*(x-start_X) + (y-start_Y)*(y-start_Y) <= r*r) && 
+                    (num > sAngle) && (num < eAngle) && 
+                    (x > 0) && (x < width) && (y > 0) && (y < height))
+                {
+                        if(this->grid[x][y].pherFood == true)
+                            return true;
+                }
+            }
+        }
+    }
+
+    return false;
+
+/*     int x = A.pos.x;
     int y = A.pos.y;
 
     if(A.hasFood)
@@ -474,57 +533,206 @@ bool World::pherCheck(Ant A)
             }
     }
 
-    return false;
+    return false; */
 }
 
-float World::averageFoodAngle(int x, int y)
+float World::averageFoodAngle(Ant A)
 {
-    int sumOfWeight = 1;
-    int weightAngle = 1;
-    float ret = 0.0;
+    int start_X = A.pos.x;//colPos.x; // center point
+    int start_Y = A.pos.y;//colPos.y;
 
-    for(int row = -2; row <= 2; row++)
-        for(int col = -2; col <=2; col++)
+    int r = range;
+
+    float angle = A.angle;
+    float sAngle = A.angle - rangeWidth;
+    float eAngle = A.angle + rangeWidth;
+    
+    if(sAngle < 0)
+        sAngle+=360;
+    if(eAngle < sAngle)
+        eAngle+=360;
+    
+    double curCos = std::cos(sAngle);
+    double curSin = std::sin(sAngle);
+    double curTan = curSin/curCos;
+    double newCos = std::cos(eAngle);
+    double newSin = std::sin(eAngle);
+    double newTan = newSin/newCos;
+    double xMax = curCos*range;
+    double r2 = range*range;
+
+
+    int highX;
+    int highY;
+    int highAmount = 0;
+
+    for(int x = start_X - r; x < start_X + r; x++)
+    {
+        for(int y = start_Y - r; y < start_Y + r; y++)
         {
-            if(this->grid[x + row][y + col].pherFood == true)
+            float deltaX = x - start_X;
+            float deltaY = y - start_Y;
+            float num = atan2(deltaY,deltaX) * 180 / 3.14;
+            if((num < 0) || ((num < sAngle) && (num < eAngle)))
+                num +=360;
+
+            if(((x-start_X)*(x-start_X) + (y-start_Y)*(y-start_Y) <= r*r) && 
+            (num > sAngle) && (num < eAngle) && 
+            (x > 0) && (x < width) && (y > 0) && (y < height))
             {
-                sumOfWeight = sumOfWeight + this->grid[x + row][y + col].pherFoodAmount;
-                weightAngle = weightAngle + this->grid[x + row][y + col].pherFoodAmount * this->grid[x + row][y + col].toFoodAngle;
+                if((this->grid[x][y].hasFood == false) && (this->grid[x][y].pherFoodAmount > highAmount))
+                {
+                    highX = x;
+                    highY = y;
+                    highAmount = this->grid[x][y].pherFoodAmount;
+                }
             }
         }
-
-    //std::cout << "food pheromone " << weightAngle << " " << sumOfWeight << std::endl;
-    if((sumOfWeight > 0) && (weightAngle > 0))
-    {
-        ret = weightAngle / sumOfWeight;
     }
 
-    return ret;
+    if(highAmount > 0)
+    {
+        int newY = highY - start_Y;
+        int newX = highX - start_X;
+        int newAngle = atan2(newY, newX) * 180 / 3.14;
+        if(newAngle < 0)
+            newAngle += 360;
+        return newAngle;
+    }
+
+    return angle;
+
+
+    //----------------------------------------------------------------//
+    /*     int sumOfWeight = 1;
+        int weightAngle = 1;
+        float ret = 0.0;
+
+        for(int row = -2; row <= 2; row++)
+            for(int col = -2; col <=2; col++)
+            {
+                if(this->grid[x + row][y + col].pherFood == true)
+                {
+                    sumOfWeight = sumOfWeight + this->grid[x + row][y + col].pherFoodAmount;
+                    weightAngle = weightAngle + this->grid[x + row][y + col].pherFoodAmount * this->grid[x + row][y + col].toFoodAngle;
+                }
+            }
+
+        //std::cout << "food pheromone " << weightAngle << " " << sumOfWeight << std::endl;
+        if((sumOfWeight > 0) && (weightAngle > 0))
+        {
+            ret = weightAngle / sumOfWeight;
+        }
+
+        return ret; */
 }
 
-float World::averageHomeAngle(int x, int y)
+float World::averageHomeAngle(Ant A)
 {
-    int sumOfWeight = 0;
-    int weightAngle = 0;
-    float ret = 0.0;
+    int start_X = A.pos.x;//colPos.x; // center point
+    int start_Y = A.pos.y;//colPos.y;
 
-    for(int row = -2; row <= 2; row++)
-        for(int col = -2; col <=2; col++)
+    int r = range;
+
+    float angle = A.angle;
+    float sAngle = A.angle - rangeWidth;
+    float eAngle = A.angle + rangeWidth;
+    
+    if(sAngle < 0)
+        sAngle+=360;
+    if(eAngle < sAngle)
+        eAngle+=360;
+    
+    double curCos = std::cos(sAngle);
+    double curSin = std::sin(sAngle);
+    double curTan = curSin/curCos;
+    double newCos = std::cos(eAngle);
+    double newSin = std::sin(eAngle);
+    double newTan = newSin/newCos;
+    double xMax = curCos*range;
+    double r2 = range*range;
+
+
+    int highX;
+    int highY;
+    int highAmount = 0;
+
+    for(int x = start_X - r; x < start_X + r; x++)
+    {
+        for(int y = start_Y - r; y < start_Y + r; y++)
         {
-            if((this->grid[x + row][y + col].type == 0) && (this->grid[x + row][y + col].pherHome == true))
+            float deltaX = x - start_X;
+            float deltaY = y - start_Y;
+            float num = atan2(deltaY,deltaX) * 180 / 3.14;
+            if((num < 0) || ((num < sAngle) && (num < eAngle)))
+                num +=360;
+
+            if(((x-start_X)*(x-start_X) + (y-start_Y)*(y-start_Y) <= r*r) && 
+            (num > sAngle) && (num < eAngle) && 
+            (x > 0) && (x < width) && (y > 0) && (y < height))
             {
-                sumOfWeight = sumOfWeight + this->grid[x + row][y + col].pherHomeAmount;
-                weightAngle = weightAngle + this->grid[x + row][y + col].pherHomeAmount * this->grid[x + row][y + col].toHomeAngle;
+                if(this->grid[x][y].type == 4)
+                {
+                    highX = x;
+                    highY = y;
+                    int newY = highY - start_Y;
+                    int newX = highX - start_X;
+                    int newAngle = atan2(newY, newX) * 180 / 3.14;
+                    if(newAngle < 0)
+                        newAngle += 360;
+                    return newAngle;
+                }
+                if((this->grid[x][y].pherHome == true) && (this->grid[x][y].pherHomeAmount > highAmount))
+                {
+                    highX = x;
+                    highY = y;
+                    highAmount = this->grid[x][y].pherHomeAmount;
+                }
             }
         }
-
-    //std::cout << "Home pheromone " << weightAngle << " " << sumOfWeight << std::endl;
-    if((sumOfWeight > 0) && (weightAngle > 0))
-    {
-        ret = weightAngle / sumOfWeight;
     }
 
-    return ret;
+    if(highAmount > 0)
+    {
+        int newY = highY - start_Y;
+        int newX = highX - start_X;
+        int newAngle = atan2(newY, newX) * 180 / 3.14;
+        if(newAngle < 0)
+            newAngle += 360;
+        return newAngle;
+    }
+
+    return angle;
+
+
+
+
+
+
+
+
+
+    /*     int sumOfWeight = 0;
+        int weightAngle = 0;
+        float ret = 0.0;
+
+        for(int row = -2; row <= 2; row++)
+            for(int col = -2; col <=2; col++)
+            {
+                if((this->grid[x + row][y + col].type == 0) && (this->grid[x + row][y + col].pherHome == true))
+                {
+                    sumOfWeight = sumOfWeight + this->grid[x + row][y + col].pherHomeAmount;
+                    weightAngle = weightAngle + this->grid[x + row][y + col].pherHomeAmount * this->grid[x + row][y + col].toHomeAngle;
+                }
+            }
+
+        //std::cout << "Home pheromone " << weightAngle << " " << sumOfWeight << std::endl;
+        if((sumOfWeight > 0) && (weightAngle > 0))
+        {
+            ret = weightAngle / sumOfWeight;
+        }
+
+        return ret; */
 }
 
 // does not work yet.
