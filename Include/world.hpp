@@ -8,6 +8,7 @@
 const int width = 256;//1024;
 const int height = 192;//768;
 const int tileSize = 4;
+const float wTime = 5.0; //15.0
 const int antSize = 50;
 
 
