@@ -63,7 +63,7 @@ void World::draw(sf::RenderWindow &window)
                 this->grid[x][y].foodAmount = 50;
                 window.draw(this->grid[x][y].shape);
             }
-            else if((this->grid[x][y].pherHome == true) && (this->grid[x][y].pherFood == true))
+            else if((this->grid[x][y].pherHome == true) && (this->grid[x][y].pherFood == true) && (showPher))
             {
                 int alpha;
                 if(this->grid[x][y].pherFoodAmount > this->grid[x][y].pherHomeAmount)
@@ -81,7 +81,7 @@ void World::draw(sf::RenderWindow &window)
                 this->grid[x][y].shape.setPosition(x * tileSize, y * tileSize);
                 window.draw(this->grid[x][y].shape);
             }
-            else if(this->grid[x][y].pherHome == true)
+            else if((this->grid[x][y].pherHome == true) && (showPher))
             {
                 this->grid[x][y].shape.setFillColor(sf::Color(255, 0, 0,homeCheck));
                 this->grid[x][y].shape.setOutlineColor(sf::Color(0, 0, 0, 50));
@@ -90,7 +90,7 @@ void World::draw(sf::RenderWindow &window)
                 this->grid[x][y].shape.setPosition(x * tileSize, y * tileSize);
                 window.draw(this->grid[x][y].shape);
             }
-            else if(this->grid[x][y].pherFood == true)
+            else if((this->grid[x][y].pherFood == true) && (showPher))
             {
                 this->grid[x][y].shape.setFillColor(sf::Color(0, 0, 255,foodCheck));
                 this->grid[x][y].shape.setOutlineColor(sf::Color(0, 0, 0, 50));
@@ -118,6 +118,20 @@ void World::draw(sf::RenderWindow &window)
         {
             //std::cout << sightD << std::endl;
             showVision(this->ant[i]);
+        }
+        if(this->ant[i].hasFood == true)
+        {
+            this->ant[i].antSprite.setTexture(this->ant[i].antFoodTexture);
+            this->ant[i].antSprite.setOrigin(50.f, 50.f);
+            this->ant[i].antSprite.setScale(0.2,0.2);
+            this->ant[i].antSprite.setRotation(this->ant[i].angle);
+        }
+        else
+        {
+            this->ant[i].antSprite.setTexture(this->ant[i].antTexture);
+            this->ant[i].antSprite.setOrigin(50.f, 50.f);
+            this->ant[i].antSprite.setScale(0.2,0.2);
+            this->ant[i].antSprite.setRotation(this->ant[i].angle);
         }
             
         window.draw(this->ant[i].antSprite);
@@ -197,14 +211,6 @@ void World::pherSimulate(sf::Time elapsed)
                 
             if(this->grid[x][y].pherHome == true)
             {
-/*                 float dif = elapsed.asSeconds() - this->grid[x][y].time.asSeconds();
-                int homeCheck = this->grid[x][y].pherHomeAmount;
-                int foodCheck = this->grid[x][y].pherFoodAmount;
-                if(homeCheck > 250)
-                    homeCheck = 250;
-                if(foodCheck > 250)
-                    foodCheck = 250;
-                 */
                 if((dif < wTime) && (this->grid[x][y].pherHomeAmount > 0))
                 {
                     this->grid[x][y].shape.setFillColor(sf::Color(250, 0, 0,homeCheck));
@@ -229,9 +235,6 @@ void World::pherSimulate(sf::Time elapsed)
             }
             if(this->grid[x][y].pherFood == true)
             {
-                //float dif = elapsed.asSeconds() - this->grid[x][y].time.asSeconds();
-                //std::cout << elapsed.asSeconds() << ' ' << this->grid[x][y].time.asSeconds() << std::endl;
-                
                 if((dif < wTime) && (this->grid[x][y].pherFoodAmount > 0))
                 {
                     this->grid[x][y].shape.setFillColor(sf::Color(250, 0, 0,foodCheck));
@@ -360,7 +363,7 @@ void World::antSimulate(sf::Time elapsed)
         if(angle < 0)
             angle += 360;
 
-        //angle = 360;
+        //angle = 45;
 
         float rad = angle / 57.2958;
         float x = 1.0f * cos(rad);
@@ -368,7 +371,7 @@ void World::antSimulate(sf::Time elapsed)
         int X = pos.x + x;
         int Y = pos.y + y;
         
-        
+        //std::cout << angle << std::endl;
         if((this->grid[X][Y].type == 4) && (this->ant[i].hasFood == true))
         {
             //std::cout << "we made it" << std::endl;
@@ -424,8 +427,9 @@ void World::antSimulate(sf::Time elapsed)
         }
         else
         {
-            angle = antReverse(angle);
-            //angle = antBounce(angle);
+            //angle = antReverse(angle);
+            
+            angle = antBounce(ant[i], X, Y);
             this->ant[i].setAngle(angle);
             this->ant[i].antSprite.setPosition(this->ant[i].pos);
             this->ant[i].antSprite.setRotation(this->ant[i].angle);
@@ -794,39 +798,52 @@ float World::averageHomeAngle(Ant A)
 }
 
 // does not work yet.
-float World::antBounce(float angle)
+float World::antBounce(Ant A, int X, int Y)
 {
-    //float angle = A.getAngle();
 
-    if((angle < 361) && (angle > 270))
+    float angle = A.getAngle();
+    int startX = A.pos.x;
+    int startY = A.pos.y;
+
+    //std::cout << "flip" << std::endl;
+    if((angle >= 0) && (angle < 90) && (this->grid[startX][Y].type != 1))
     {
-        angle = angle - 90;
-        if(angle < 0)
-            angle +=360;
+        angle = angle + 110;
     }
-    else if((angle < 271) && (angle > 180))
+    else if((angle >= 0) && (angle < 90) && (this->grid[X][startY].type != 1))
     {
-        angle = angle + 90;
-        if(angle > 360)
-            angle -= 360;
+        angle = angle - 110;
     }
-    else if((angle < 181) && (angle > 90))
+    else if((angle >= 90) && (angle < 180) && (this->grid[startX][Y].type != 1))
     {
-        angle = angle - 90;
-        if(angle < 0)
-            angle +=360;
+        angle = angle - 110;
     }
-    else if((angle < 91) && (angle > 0))
+    else if((angle >= 90) && (angle < 180) && (this->grid[X][startY].type != 1))
     {
-        angle = angle + 90;
-        if(angle > 360)
-            angle -= 360;
+        angle = angle + 110;
     }
-    return angle;
-/*     angle = angle + 90;
+    else if((angle >= 180) && (angle < 270) && (this->grid[startX][Y].type != 1))
+    {
+        angle = angle + 110;
+    }
+    else if((angle >= 180) && (angle < 270) && (this->grid[X][startY].type != 1))
+    {
+        angle = angle - 110;
+    }
+    else if((angle >= 270) && (angle <= 360) && (this->grid[startX][Y].type != 1))
+    {
+        angle = angle - 110;
+    }
+    else if((angle >= 270) && (angle <= 360) && (this->grid[X][startY].type != 1))
+    {
+        angle = angle + 110;
+    }
+
+    if(angle < 0)
+        angle+= 360;
     if(angle > 360)
-        angle -= 360;
-    return angle; */
+        angle-=360;
+    return angle;
 }
 
 float World::antReverse(float angle)
@@ -939,4 +956,12 @@ void World::sightDraw()
         sightD = true;
     else
         sightD = false;
+}
+
+void World::pherDraw()
+{
+    if(showPher == false)
+        showPher = true;
+    else
+        showPher = false;
 }

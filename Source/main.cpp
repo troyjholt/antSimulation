@@ -142,6 +142,10 @@ int main(int argc, char *argv[])
                 {
                     world->sightDraw();
                 }
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num6))
+                {
+                    world->pherDraw();
+                }
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::LBracket) || sf::Keyboard::isKeyPressed(sf::Keyboard::RBracket))
                 {
                     if(sf::Keyboard::isKeyPressed(sf::Keyboard::LBracket))

@@ -23,9 +23,10 @@ class World
         sf::Vector2f colPos;
         Ant ant[antSize];
         sf::CircleShape nest;
-        int range;
-        int rangeWidth;
-        bool sightD = false;
+        int range; // distance of ants view range.
+        int rangeWidth; // width of ants view range. 
+        bool sightD = false; // shows ants vision to user
+        bool showPher = true; // shows pheromones to user
 
         World();
         void simulate(sf::Time elapsed);
@@ -36,13 +37,14 @@ class World
         float antReverse(float angle);
         float averageFoodAngle(Ant A);
         float averageHomeAngle(Ant A);
-        float antBounce(float angle);
+        float antBounce(Ant A, int X, int Y);
         bool pherCheck(Ant A);
         void buildWalls(sf::Vector2i pos, int brushSize);
         void buildFood(sf::Vector2i pos, int brushSize);
         void buildErase(sf::Vector2i pos, int brushSize);
         void showVision(Ant A);
         void sightDraw();
+        void pherDraw(); // for seeing
 /*         void antNextSpot();
         void antMove(); */
 };
