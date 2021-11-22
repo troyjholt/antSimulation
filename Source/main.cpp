@@ -52,6 +52,7 @@ int main(int argc, char *argv[])
     {
         sf::Time elapsed = clock.getElapsedTime();
         
+        
         sf::Event event;
 
         while (window.pollEvent(event))
@@ -62,8 +63,8 @@ int main(int argc, char *argv[])
             if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
             {
                 sf::Vector2i pos = sf::Mouse::getPosition(window);
-                std::cout << pos.x << " " << pos.y << std::endl;
-/*                 if((pos.x /tileSize) > width)
+                //std::cout << pos.x << " " << pos.y << std::endl;
+                /*if((pos.x /tileSize) > width)
                     pos.x = width * tileSize;
                 if((pos.y/tileSize) > height)
                     pos.y = height * tileSize; */
@@ -138,6 +139,14 @@ int main(int argc, char *argv[])
                         std::cout << "Erase Tool Deactivated" << std::endl;
                     }
                 }
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num5))
+                {
+                    world->sightDraw();
+                }
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num6))
+                {
+                    world->pherDraw();
+                }
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::LBracket) || sf::Keyboard::isKeyPressed(sf::Keyboard::RBracket))
                 {
                     if(sf::Keyboard::isKeyPressed(sf::Keyboard::LBracket))
@@ -161,16 +170,25 @@ int main(int argc, char *argv[])
             }
         }
 
+        sf::Time efficiencyA = clock.getElapsedTime();
         window.clear(sf::Color(225, 190, 160));
+        sf::Time efficiencyB = clock.getElapsedTime();
+        //std::cout << "window.clear took " << (efficiencyB.asMicroseconds() - efficiencyA.asMicroseconds()) << std::endl;
         if((elapsed.asSeconds() > 0.05) && (start))
         {
             sf::Time timeHolder = clockHolder.getElapsedTime();
             //world->draw(window);
+            efficiencyA = clock.getElapsedTime();
             world->simulate(timeHolder);
+            sf::Time efficiencyB = clock.getElapsedTime();
+            std::cout << "world->simulate() took " << (efficiencyB.asMicroseconds() - efficiencyA.asMicroseconds()) << std::endl;
 
             elapsed = clock.restart();
         }
+        efficiencyA = clock.getElapsedTime();
         world->draw(window);
+        efficiencyB = clock.getElapsedTime();
+        std::cout << "world->draw took " << (efficiencyB.asMicroseconds() - efficiencyA.asMicroseconds()) << std::endl;
         window.display();
     }
 

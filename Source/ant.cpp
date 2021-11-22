@@ -3,12 +3,12 @@
 Ant::Ant()
 {
     antTexture.loadFromFile("Assets/Graphics/ant.png");
+    antFoodTexture.loadFromFile("Assets/Graphics/antFood.png");
     antTexture.setSmooth(true);
+    antFoodTexture.setSmooth(true);
     antSprite.setTexture(antTexture);
     antSprite.setOrigin(50.f, 50.f);
     antSprite.setScale(0.2,0.2);
-    //antSprite.setOrigin(10.f, 5.f);
-    //antSprite.setRotation(angle);
     antSprite.rotate(angle);
     //std::cout << antSprite.getOrigin() << std::endl;
 }

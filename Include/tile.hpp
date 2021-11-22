@@ -22,6 +22,7 @@ class Tile
         bool pherFood = false;
         int pherHomeAmount = 0;
         int pherFoodAmount = 0;
+        bool vision = false;
 
         //sf::Clock clock;
         sf::Time time;
