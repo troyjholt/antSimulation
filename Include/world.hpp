@@ -9,7 +9,8 @@ const int width = 256;//1024;
 const int height = 192;//768;
 const int tileSize = 4;
 const float wTime = 5.0; //15.0
-const int antSize = 50;
+const int maxAntSize = 1000;
+
 
 
 /*-----------------------------------------------------------------------------
@@ -21,13 +22,14 @@ class World
         Tile grid[width][height];
         //int colony[1] = {0};
         sf::Vector2f colPos;
-        Ant ant[antSize];
+        Ant ant[maxAntSize];
         sf::CircleShape nest;
         int range; // distance of ants view range.
         int rangeWidth; // width of ants view range. 
+        int foodReturned = 0;
         bool sightD = false; // shows ants vision to user
         bool showPher = true; // shows pheromones to user
-
+        int antSize = 1;
         World();
         void simulate(sf::Time elapsed);
         void draw(sf::RenderWindow &window);

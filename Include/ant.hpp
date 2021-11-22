@@ -15,6 +15,7 @@ class Ant
         float speed = 1.0f;
         int amount = 500;
         bool hasFood = false;
+        int carryCapacity = 1;
         sf::RectangleShape antRender;
         sf::Texture antTexture; 
         sf::Texture antFoodTexture; 

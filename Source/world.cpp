@@ -23,7 +23,7 @@ World::World()
     nest.setFillColor(sf::Color::Black);
 
 
-    for(int i = 0; i < antSize; i++)
+    for(int i = 0; i < maxAntSize; i++)
     {
         ant[i].pos.x = colPos.x;
         ant[i].pos.y = colPos.y;
@@ -60,7 +60,7 @@ void World::draw(sf::RenderWindow &window)
                 this->grid[x][y].shape.setSize(sf::Vector2f(tileSize,tileSize));
                 this->grid[x][y].shape.setPosition(x * tileSize, y * tileSize);
                 this->grid[x][y].hasFood = true;
-                this->grid[x][y].foodAmount = 50;
+                //this->grid[x][y].foodAmount = 50;
                 window.draw(this->grid[x][y].shape);
             }
             else if((this->grid[x][y].pherHome == true) && (this->grid[x][y].pherFood == true) && (showPher))
@@ -384,6 +384,15 @@ void World::antSimulate(sf::Time elapsed)
             this->ant[i].setAngle(angle);
             this->ant[i].antSprite.setPosition(this->ant[i].pos);
             this->ant[i].antSprite.setRotation(this->ant[i].angle);
+
+            foodReturned = foodReturned + this->ant[i].carryCapacity;
+            //std::cout << "Amount of food in storage: " << foodReturned << std::endl;
+            if(foodReturned >= 5)
+            {
+                foodReturned = 0;
+                antSize+=1;
+                //std::cout << "New ant created. # of ants is now: " << antSize << std::endl;
+            }
         }
         else if((this->grid[X][Y].type == 0) && (this->ant[i].hasFood == true) && (this->grid[X][Y].pherHomeAmount > 0))
         {
@@ -420,6 +429,13 @@ void World::antSimulate(sf::Time elapsed)
         {
             this->ant[i].hasFood = true;
             this->ant[i].amount = 500;
+            this->grid[X][Y].foodAmount = this->grid[X][Y].foodAmount - this->ant[i].carryCapacity;
+            //std::cout << "grabbing food: " << this->grid[X][Y].foodAmount << std::endl;
+            if(this->grid[X][Y].foodAmount <= 0)
+            {
+                this->grid[X][Y].foodAmount = 0;
+                this->grid[X][Y].type = 0;
+            }
             angle = antReverse(angle);
             this->ant[i].setAngle(angle);
             this->ant[i].antSprite.setPosition(this->ant[i].pos);
@@ -814,6 +830,10 @@ float World::antBounce(Ant A, int X, int Y)
     {
         angle = angle - 110;
     }
+/*     else if((angle >= 0) && (angle < 90) && (this->grid[X][startY].type == 1) && (this->grid[startX][startY].type == 1))
+    {
+        angle = angle - 200;
+    } */
     else if((angle >= 90) && (angle < 180) && (this->grid[startX][Y].type != 1))
     {
         angle = angle - 110;
@@ -822,6 +842,10 @@ float World::antBounce(Ant A, int X, int Y)
     {
         angle = angle + 110;
     }
+/*     else if((angle >= 90) && (angle < 180) && (this->grid[X][startY].type == 1) && (this->grid[startX][startY].type == 1))
+    {
+        angle = angle + 200;
+    } */
     else if((angle >= 180) && (angle < 270) && (this->grid[startX][Y].type != 1))
     {
         angle = angle + 110;
@@ -830,6 +854,10 @@ float World::antBounce(Ant A, int X, int Y)
     {
         angle = angle - 110;
     }
+/*     else if((angle >= 180) && (angle < 270) && (this->grid[X][startY].type == 1) && (this->grid[startX][startY].type == 1))
+    {
+        angle = angle - 200;
+    } */
     else if((angle >= 270) && (angle <= 360) && (this->grid[startX][Y].type != 1))
     {
         angle = angle - 110;
@@ -838,6 +866,10 @@ float World::antBounce(Ant A, int X, int Y)
     {
         angle = angle + 110;
     }
+/*     else if((angle >= 270) && (angle <= 360) && (this->grid[X][startY].type == 1) && (this->grid[startX][startY].type == 1))
+    {
+        angle = angle + 200;
+    } */
 
     if(angle < 0)
         angle+= 360;
@@ -874,6 +906,7 @@ void World::buildWalls(sf::Vector2i pos, int brushSize)
                   ((pos.x + x) > 0) && ((pos.y + y) > 0))
                 {
                     this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type = 1; 
+                    this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].foodAmount = 0; 
                 }
                           
             }
@@ -909,6 +942,7 @@ void World::buildFood(sf::Vector2i pos, int brushSize)
                   ((pos.x + x) > 0) && ((pos.y + y) > 0))
                 {
                     this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type = 2; 
+                    this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].foodAmount = 5; 
                 }
             }
         }
@@ -939,6 +973,7 @@ void World::buildErase(sf::Vector2i pos, int brushSize)
                   ((pos.x + x) > 0) && ((pos.y + y) > 0))
                 {
                     this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].type = 0; 
+                    this->grid[(pos.x + x) / tileSize][(pos.y + y)/ tileSize].foodAmount = 0; 
                 }
             }
         }

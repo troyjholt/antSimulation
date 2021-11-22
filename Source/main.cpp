@@ -52,6 +52,7 @@ int main(int argc, char *argv[])
     {
         sf::Time elapsed = clock.getElapsedTime();
         
+        
         sf::Event event;
 
         while (window.pollEvent(event))
@@ -169,16 +170,25 @@ int main(int argc, char *argv[])
             }
         }
 
+        sf::Time efficiencyA = clock.getElapsedTime();
         window.clear(sf::Color(225, 190, 160));
+        sf::Time efficiencyB = clock.getElapsedTime();
+        //std::cout << "window.clear took " << (efficiencyB.asMicroseconds() - efficiencyA.asMicroseconds()) << std::endl;
         if((elapsed.asSeconds() > 0.05) && (start))
         {
             sf::Time timeHolder = clockHolder.getElapsedTime();
             //world->draw(window);
+            efficiencyA = clock.getElapsedTime();
             world->simulate(timeHolder);
+            sf::Time efficiencyB = clock.getElapsedTime();
+            std::cout << "world->simulate() took " << (efficiencyB.asMicroseconds() - efficiencyA.asMicroseconds()) << std::endl;
 
             elapsed = clock.restart();
         }
+        efficiencyA = clock.getElapsedTime();
         world->draw(window);
+        efficiencyB = clock.getElapsedTime();
+        std::cout << "world->draw took " << (efficiencyB.asMicroseconds() - efficiencyA.asMicroseconds()) << std::endl;
         window.display();
     }
 
