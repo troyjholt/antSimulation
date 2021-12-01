@@ -17,8 +17,8 @@ class Ant
         bool hasFood = false;
         int carryCapacity = 1;
         sf::RectangleShape antRender;
-        sf::Texture antTexture; 
-        sf::Texture antFoodTexture; 
+        //sf::Texture antTexture; 
+        //sf::Texture antFoodTexture; 
         sf::Sprite antSprite;
 
         int colony; // the colony that this ant belongs too.

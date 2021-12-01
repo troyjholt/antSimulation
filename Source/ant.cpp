@@ -2,11 +2,11 @@
 
 Ant::Ant()
 {
-    antTexture.loadFromFile("Assets/Graphics/ant.png");
-    antFoodTexture.loadFromFile("Assets/Graphics/antFood.png");
-    antTexture.setSmooth(true);
-    antFoodTexture.setSmooth(true);
-    antSprite.setTexture(antTexture);
+    //antTexture.loadFromFile("Assets/Graphics/ant.png");
+    //antFoodTexture.loadFromFile("Assets/Graphics/antFood.png");
+    //antTexture.setSmooth(true);
+    //antFoodTexture.setSmooth(true);
+    //antSprite.setTexture(antTexture);
     antSprite.setOrigin(50.f, 50.f);
     antSprite.setScale(0.2,0.2);
     antSprite.rotate(angle);
