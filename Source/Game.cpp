@@ -1,56 +1,50 @@
 #include "Game.hpp"
+#include "SplashState.hpp"
 
-Game::Game()
-: mWindow(sf::VideoMode(1024, 768), "Ant Simulation")
+Game::Game(int width, int height, std::string title)//: mWindow(sf::VideoMode(1024, 768), "Ant Simulation")
 {
-
+    _data->window.create(sf::VideoMode(width, height), title, sf::Style::Close | sf::Style::Titlebar);
+    _data->machine.AddState(StateRef(new SplashState(this->_data)));
+    
+    this->run( );
 }
 
 void Game::run()
 {
-    sf::Clock clock;
-    sf::Time timeSinceLastUpdate = sf::Time::Zero;
+    float newTime, frameTime, interpolation;
 
-    TextureHolder textures;
-    textures.load(Textures::Ant, "Assets/Graphics/ant.png");
+    float currentTime = this->_clock.getElapsedTime().asSeconds();
+    float accumulator = 0.0f;
 
-    sf::Sprite ant;
-    ant.setTexture(textures.get(Textures::Ant));
-
-
-    sf::Text landing_text;
-    sf::Font font;
-    if(!font.loadFromFile("Assets/Fonts/Yagora.ttf"));
-
-    landing_text.setFont(font);
-    landing_text.setCharacterSize(30);
-
-    landing_text.setFillColor(sf::Color::Black);
-    landing_text.setFillColor(sf::Color::Black);
-    landing_text.setPosition(mWindow.getView().getSize().x / 2, 40.f);//mWindow.getSize().x/2.f, 20.0f);
-    landing_text.setString("Ant Simulation");
-    sf::FloatRect textRect = landing_text.getLocalBounds();
-    landing_text.setOrigin((textRect.left + textRect.width/2.0f), (textRect.top + textRect.height/2.0f));
-
-    while(mWindow.isOpen())
+    while (this->_data->window.isOpen())
     {
-        //sf::Time deltaTime = clock.restart();
-        
-        timeSinceLastUpdate += clock.restart();
-        while (timeSinceLastUpdate > TimePerFrame)
+        this->_data->machine.ProcessStateChanges();
+
+        newTime = this->_clock.getElapsedTime().asSeconds();
+        frameTime = newTime - currentTime;
+
+        if (frameTime > 0.25f)
         {
-            timeSinceLastUpdate -= TimePerFrame;
-            processEvents();
-            update(TimePerFrame);
+            frameTime = 0.25f;
         }
-        
-        render();
-        mWindow.draw(landing_text);
-        mWindow.display();
+
+        currentTime = newTime;
+        accumulator += frameTime;
+
+        while (accumulator >= dt)
+        {
+            this->_data->machine.GetActiveState()->HandleInput();
+            this->_data->machine.GetActiveState()->Update(dt);
+
+            accumulator -= dt;
+        }
+
+        interpolation = accumulator / dt;
+        this->_data->machine.GetActiveState()->Draw(interpolation);
     }
 }
 
-void Game::processEvents()
+/* void Game::processEvents()
 {
     sf::Event event;
     while(mWindow.pollEvent(event))
@@ -68,11 +62,11 @@ void Game::processEvents()
                 break;
         }
     }
-}
+} */
 
-void Game::handleMouseInput(sf::Event::MouseButtonEvent b, bool isPressed)
+/* void Game::handleMouseInput(sf::Event::MouseButtonEvent b, bool isPressed)
 {
-    if(b.button == 0)
+     if(b.button == 0)
     {
         sf::Vector2i pos;// = sf::Mouse::getPosition(mWindow);
         pos.x = b.x;
@@ -111,9 +105,9 @@ void Game::handleMouseInput(sf::Event::MouseButtonEvent b, bool isPressed)
             //world->updateLevel(level);
         }
     }
-}
+} */
 
-void Game::handleKeyboardInput(sf::Keyboard::Key key, bool isPressed)
+/* void Game::handleKeyboardInput(sf::Keyboard::Key key, bool isPressed)
 {
     if(key == sf::Keyboard::Num1)
         start = !start;
@@ -161,17 +155,17 @@ void Game::handleKeyboardInput(sf::Keyboard::Key key, bool isPressed)
         else
             brushSize++;
     }
-}
+} */
 
-void Game::update(sf::Time deltaTime)
+/* void Game::update(sf::Time deltaTime)
 {
 
-}
+} */
 
-void Game::render()
+/* void Game::render()
 {
-    mWindow.clear(sf::Color(225, 190, 160));
+    //mWindow.clear(sf::Color(225, 190, 160));
     //mWindow.draw();
     //mWindow.display();
 
-}
+} */

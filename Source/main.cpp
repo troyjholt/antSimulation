@@ -1,26 +1,29 @@
-#include <SFML/Graphics.hpp>
+/* #include <SFML/Graphics.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-#include <string>
+#include <string> */
+#include "Game.hpp"
+#include "DEFINITIONS.hpp"
+
 //#include "world.hpp"
 //#include "TileMap.cpp"
-#include "Game.hpp"
+
 
 //#include "ant.hpp"
 
 //#include "tile.hpp"
 
-sf::Vector2f viewSize(1024, 768);
+/* sf::Vector2f viewSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 sf::VideoMode vm(viewSize.x, viewSize.y);  
 
 const int TILE_NUMBER_X = 540;
 const int TILE_NUMBER_Y = 960;
 const int SIZE = 2;
-int spot = 1;
+int spot = 1; */
 
 /* int maxSize = 20;
 int smallSize = 1;
@@ -37,18 +40,9 @@ bool bErase = false;
 
 int main(int argc, char *argv[])
 {
-    try
-    {
-        Game game;
-        game.run();
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
-    }
-    
 
-    
+    Game(SCREEN_WIDTH, SCREEN_HEIGHT, "Ant Simulation");
+
     return 0;
 }
     /* srand (time(NULL));

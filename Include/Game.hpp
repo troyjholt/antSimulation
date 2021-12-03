@@ -1,5 +1,10 @@
+#pragma once
+
 #ifndef GAME_HPP
 #define GAME_HPP
+
+#include <memory>
+#include <string>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window/VideoMode.hpp>
@@ -8,35 +13,56 @@
 #include "Colony.hpp"
 #include "world.hpp"
 #include "TileMap.cpp"
-#include "TextureHolder.hpp"
+#include "StateMachine.hpp"
+#include "AssetManager.hpp"
+#include "InputManager.hpp"
+//#include "SplashState.hpp"
 
-const sf::Time TimePerFrame = sf::seconds(1.f / 60.f);
 
+struct GameData
+{
+    StateMachine machine;
+    sf::RenderWindow window;
+    AssetManager assets;
+    InputManager input;
+    std::string level;
+};
 
+typedef std::shared_ptr<GameData> GameDataRef;
+
+//const sf::Time TimePerFrame = sf::seconds(1.f / 60.f);
 
 class Game
 {
-    public:Game();
-        void             run();
+    public:
+        Game(int width, int height, std::string title );
+        
     
     public:
-        int maxSize = 20;
-        int smallSize = 1;
-        int brushSize = 10;
-        bool start = false;
-        bool bWall = false;
-        bool bFood = false;
-        bool bErase = false;
+        int             maxSize = 20;
+        int             smallSize = 1;
+        int             brushSize = 10;
+        bool            start = false;
+        bool            bWall = false;
+        bool            bFood = false;
+        bool            bErase = false;
 
     private:
-        void             processEvents();
-        void             update(sf::Time deltaTime);
-        void             handleMouseInput(sf::Event::MouseButtonEvent b, bool isPressed);
-        void             handleKeyboardInput(sf::Keyboard::Key key, bool isPressed);
-        void             render();
+        const float     dt = 1.0f / 60.0f;
+        sf::Clock       _clock;
+        GameDataRef     _data = std::make_shared<GameData>();
+        
+        void             run();
 
-    private:
-        sf::RenderWindow mWindow;
+        //void             processEvents();
+        //void             update(sf::Time deltaTime);
+        //void             handleMouseInput(sf::Event::MouseButtonEvent b, bool isPressed);
+        //void             handleKeyboardInput(sf::Keyboard::Key key, bool isPressed);
+        //void             render();
+        
+
+    //private:
+        //sf::RenderWindow mWindow;
         //sf::CircleShape  mPlayer;
 };
 
