@@ -11,9 +11,6 @@ CreateState::CreateState( GameDataRef data ) : _data( data )
 
 void CreateState::Init()
 {
-
-
-
     this->_data->assets.LoadTexture("Small Button", BUTTON_SMALL_FILEPATH);
     this->_data->assets.LoadTexture("Small Button Active", BUTTON_SMALL_ACTIVE_FILEPATH);
     this->_data->assets.LoadFont("Game Font", GAME_FONT_FILEPATH);
@@ -49,18 +46,18 @@ void CreateState::Init()
     readFile.open("Assets/Levels/creation_level.txt");
     if(readFile.is_open())
     {
-        for(int x = 0; x < width; x++)
+        for(int x = 0; x < WIDTH; x++)
         {
-            for(int y = 0; y < height; y++)
+            for(int y = 0; y < HEIGHT; y++)
             {
-                _level[x + width * y] = readFile.get() - '0';
+                _level[x + WIDTH * y] = readFile.get() - '0';
             }
         }
     }
     
     readFile.close();
 
-    if (!_map.load("Assets/Graphics/tileMap.png", sf::Vector2u(tileSize, tileSize), _level, width, height))
+    if (!_map.load("Assets/Graphics/tileMap.png", sf::Vector2u(TILE_SIZE, TILE_SIZE), _level, WIDTH, HEIGHT))
         return;
 }
 
@@ -127,11 +124,11 @@ void CreateState::HandleInput()
 
             std::ofstream readFile(str1);
             
-            for(int x = 0; x < width; x++)
+            for(int x = 0; x < WIDTH; x++)
             {
-                for(int y = 0; y < height; y++)
+                for(int y = 0; y < HEIGHT; y++)
                 {
-                    readFile << _level[x + width * y];
+                    readFile << _level[x + WIDTH * y];
                 }
             }
             readFile.close();
@@ -151,32 +148,32 @@ void CreateState::HandleInput()
                 int y = size * -1;
                 for(y; y < size; y++)
                 {
-                    if((((pos.x + x) >= 4) && ((pos.y + y) >= 4)) && ((pos.x + x)/tileSize < width - 1) && ((pos.y + y)/tileSize < height - 1))
+                    if((((pos.x + x) >= 4) && ((pos.y + y) >= 4)) && ((pos.x + x)/TILE_SIZE < WIDTH - 1) && ((pos.y + y)/TILE_SIZE < HEIGHT - 1))
                     {
                         if(sf::Mouse::isButtonPressed(sf::Mouse::Right))
                         {
-                            this->_level[((pos.x + x)/tileSize) + width * ((pos.y + y)/tileSize)] = 0;
+                            this->_level[((pos.x + x)/TILE_SIZE) + WIDTH * ((pos.y + y)/TILE_SIZE)] = 0;
                         }
                         else if(_bWall)
                         {
-                            this->_level[((pos.x + x)/tileSize) + width * ((pos.y + y)/tileSize)] = 1;
+                            this->_level[((pos.x + x)/TILE_SIZE) + WIDTH * ((pos.y + y)/TILE_SIZE)] = 1;
                             //world->buildWalls(pos, brushSize);
                         }
                         else if(_bFood)
                         {
-                            this->_level[((pos.x + x)/tileSize) + width * ((pos.y + y)/tileSize)] = 2;
+                            this->_level[((pos.x + x)/TILE_SIZE) + WIDTH * ((pos.y + y)/TILE_SIZE)] = 2;
                             //world->buildFood(pos, brushSize);
                         }
                         else if(_bNest)
                         {
-                            this->_level[((pos.x + x)/tileSize) + width * ((pos.y + y)/tileSize)] = 3;
+                            this->_level[((pos.x + x)/TILE_SIZE) + WIDTH * ((pos.y + y)/TILE_SIZE)] = 4;
                         }
 
                     }
                 }
             }
 
-            if (!_map.load("Assets/Graphics/tileMap.png", sf::Vector2u(tileSize, tileSize), _level, width, height))
+            if (!_map.load("Assets/Graphics/tileMap.png", sf::Vector2u(TILE_SIZE, TILE_SIZE), _level, WIDTH, HEIGHT))
                 return;
         }
     }

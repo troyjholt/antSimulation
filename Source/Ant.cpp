@@ -1,16 +1,10 @@
-#include "ant.hpp"
+#include "Ant.hpp"
 
-Ant::Ant()
+Ant::Ant( GameDataRef data ) : _data( data )
 {
-    //antTexture.loadFromFile("Assets/Graphics/ant.png");
-    //antFoodTexture.loadFromFile("Assets/Graphics/antFood.png");
-    //antTexture.setSmooth(true);
-    //antFoodTexture.setSmooth(true);
-    //antSprite.setTexture(antTexture);
     antSprite.setOrigin(50.f, 50.f);
     antSprite.setScale(0.2,0.2);
     antSprite.rotate(angle);
-    //std::cout << antSprite.getOrigin() << std::endl;
 }
 
 sf::Vector2f Ant::getPos()
@@ -35,6 +29,7 @@ void Ant::setPos(sf::Vector2f mPos)
 {
     pos.x = mPos.x;
     pos.y = mPos.y;
+    antSprite.setPosition(mPos);
 }
 
 /* void Ant::setPos(sf::Vector2f position)

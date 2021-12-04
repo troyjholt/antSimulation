@@ -4,6 +4,7 @@
 #include "tile.hpp"
 #include "ant.hpp"
 #include "Colony.hpp"
+#include "DEFINITIONS.hpp"
 #include <cmath>
 
 //const int width = 256;//1024;
@@ -18,7 +19,7 @@ const int maxColonies = 5; // max allowed colonies per
 class World
 {
     public:
-        Colony * colonies;
+        //Colony * colonies;
         int numCol;
         
         //sf::CircleShape nest;
@@ -30,7 +31,7 @@ class World
         int antSize = 1;
         World(int numColonies, int level[], bool randStart);
         void simulate(sf::Time elapsed);
-        void updateLevel(int level[height * width]);
+        void updateLevel(int level[HEIGHT * WIDTH]);
         void print();
         void draw(sf::RenderWindow &window, sf::Clock &clock);
 

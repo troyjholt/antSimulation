@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef GAME_HPP
 #define GAME_HPP
 
@@ -10,8 +8,8 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Mouse.hpp>
-#include "Colony.hpp"
-#include "world.hpp"
+//#include "Colony.hpp"
+//#include "world.hpp"
 #include "TileMap.cpp"
 #include "StateMachine.hpp"
 #include "AssetManager.hpp"

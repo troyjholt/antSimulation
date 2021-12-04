@@ -1,44 +1,32 @@
+#pragma once
 
-#ifndef ANT_HPP
-#define ANT_HPP
+#include "Game.hpp"
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <math.h>
+#include "DEFINITIONS.hpp"
 //#include "world.hpp"
 
 class Ant
 {
     public:
-        sf::Vector2f pos;
-        float angle = rand() % 360 + 1;
-        float distance = 1.0f;
-        float speed = 1.0f;
-        int amount = 500;
-        bool hasFood = false;
-        int carryCapacity = 1;
-        sf::RectangleShape antRender;
-        //sf::Texture antTexture; 
-        //sf::Texture antFoodTexture; 
-        sf::Sprite antSprite;
-
-        int colony; // the colony that this ant belongs too.
-
-        Ant();
+        Ant(GameDataRef data);
+        void setPos(sf::Vector2f mPos);
+        void setAngle(float mAngle);
         sf::Vector2f getPos();
         float getAngle();
-        void setAngle(float mAngle);
-        void setPos(sf::Vector2f mPos);
-        /* void setColony(int mCol);
-        void setPos(sf::Vector2f position);
-        void simulate(World &world);
-        void nextSpot(World &world);
-        float reverse();
-        void move(int X, int Y); */
+
+        sf::Vector2f pos;
+        sf::Sprite antSprite;
+        
+        int colonyID; // the colony that this ant belongs too.
+        float angle = rand() % 360 + 1;
+        int pheromoneAmount = 500;
+        bool hasFood = false;
+
+    private:
+        GameDataRef _data;
 };
-
-#endif
-
-
 
 //#define PI 3.14159265
 //const float PHERAMOUNT = 1.5f;

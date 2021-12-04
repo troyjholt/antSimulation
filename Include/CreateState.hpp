@@ -5,6 +5,7 @@
 #include "Game.hpp"
 #include "TileMap.cpp"
 #include "MainMenuState.hpp"
+#include "DEFINITIONS.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -23,7 +24,7 @@ class CreateState : public State
     
     private:
         GameDataRef _data;
-        int _level[height * width];
+        int _level[HEIGHT * WIDTH];
         TileMap _map;
         sf::Sprite _wallButton;
         sf::Sprite _nestButton;

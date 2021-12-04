@@ -3,7 +3,12 @@
 #define SCREEN_WIDTH 1024
 #define SCREEN_HEIGHT 768
 
-#define SPLASH_STATE_SHOW_TIME 1.0
+#define WIDTH 256
+#define HEIGHT 192
+
+#define TILE_SIZE 4
+
+#define SPLASH_STATE_SHOW_TIME 0.5
 
 #define SPLASH_SCENE_BACKGROUND_FILEPATH "Assets/Graphics/splashScreen.png"
 #define MAIN_MENU_BACKGROUND_FILEPATH "Assets/Graphics/mainScreen.png"
@@ -16,5 +21,13 @@
 #define BUTTON_SMALL_FILEPATH "Assets/Graphics/buttonSmall.png"
 #define BUTTON_SMALL_ACTIVE_FILEPATH "Assets/Graphics/buttonSmallActive.png"
 
+#define ANT_TEXTURE_FILEPATH "Assets/Graphics/ant.png"
+#define ANT_FOOD_TEXTURE_FILEPATH "Assets/Graphics/antFood.png"
+
 #define MAX_BRUSH_SIZE 20
 #define MIN_BRUSH_SIZE 1
+
+#define ANT_DEFAULT_SPEED 70.0f
+#define NUM_COLONIES 1
+#define COLONY_START_SIZE 1
+#define COLONY_MAX_SIZE 5000

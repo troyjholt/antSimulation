@@ -25,17 +25,6 @@ const int TILE_NUMBER_Y = 960;
 const int SIZE = 2;
 int spot = 1; */
 
-/* int maxSize = 20;
-int smallSize = 1;
-int brushSize = 10;
-bool start = false;
-bool bWall = false;
-bool bFood = false;
-bool bErase = false;
- */
-//const sf::Texture antTexture = new sf::Texture.loadFromFile("Assets/Graphics/ant.png");
-//const sf::Texture antFoodTexture;
-
 //int numColonies = 1;
 
 int main(int argc, char *argv[])
