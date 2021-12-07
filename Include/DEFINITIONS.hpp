@@ -23,11 +23,17 @@
 
 #define ANT_TEXTURE_FILEPATH "Assets/Graphics/ant.png"
 #define ANT_FOOD_TEXTURE_FILEPATH "Assets/Graphics/antFood.png"
+#define FOOD_TEXTURE_FILEPATH "Assets/Graphics/food.png"
+#define NEST_TEXTURE_FILEPATH "Assets/Graphics/nest.png"
 
 #define MAX_BRUSH_SIZE 20
 #define MIN_BRUSH_SIZE 1
 
-#define ANT_DEFAULT_SPEED 70.0f
+#define ANT_DEFAULT_SPEED 75.0f // 75.0f
 #define NUM_COLONIES 1
 #define COLONY_START_SIZE 1
 #define COLONY_MAX_SIZE 5000
+
+#define FOOD_DEFAULT_AMOUNT 1
+
+#define PHEROMONE_DEFAULT_DISSOLVE 100.0f

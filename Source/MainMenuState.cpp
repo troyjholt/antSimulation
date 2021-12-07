@@ -56,13 +56,13 @@ void MainMenuState::HandleInput()
 
         if(_data->input.IsSpriteClicked(_playButton, sf::Mouse::Left, this->_data->window))
         {
-            std::cout << "Go to game screen" << std::endl;
+            //std::cout << "Go to game screen" << std::endl;
             _data->machine.AddState(StateRef(new MapChoiceState(_data)), true);
         }
 
         if(_data->input.IsSpriteClicked(_createButton, sf::Mouse::Left, this->_data->window))
         {
-            std::cout << "Go to create screen" << std::endl;
+            //std::cout << "Go to create screen" << std::endl;
             _data->machine.AddState(StateRef(new CreateState(_data)), true);
         }
     }

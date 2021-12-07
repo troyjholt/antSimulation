@@ -14,6 +14,9 @@
 #include "StateMachine.hpp"
 #include "AssetManager.hpp"
 #include "InputManager.hpp"
+
+#include "Food.hpp"
+//#include "Food.hpp"
 //#include "SplashState.hpp"
 
 
@@ -23,7 +26,9 @@ struct GameData
     sf::RenderWindow window;
     AssetManager assets;
     InputManager input;
+
     std::string level;
+    std::vector<Food> food;
 };
 
 typedef std::shared_ptr<GameData> GameDataRef;
@@ -51,17 +56,6 @@ class Game
         GameDataRef     _data = std::make_shared<GameData>();
         
         void             run();
-
-        //void             processEvents();
-        //void             update(sf::Time deltaTime);
-        //void             handleMouseInput(sf::Event::MouseButtonEvent b, bool isPressed);
-        //void             handleKeyboardInput(sf::Keyboard::Key key, bool isPressed);
-        //void             render();
-        
-
-    //private:
-        //sf::RenderWindow mWindow;
-        //sf::CircleShape  mPlayer;
 };
 
 #endif

@@ -1,5 +1,6 @@
 #include "Game.hpp"
 #include "SplashState.hpp"
+//#include "GameState.hpp"
 
 Game::Game(int width, int height, std::string title)//: mWindow(sf::VideoMode(1024, 768), "Ant Simulation")
 {

@@ -6,13 +6,19 @@
 
 GameState::GameState( GameDataRef data ) : _data( data )
 {
-
+    
 }
 
 void GameState::Init()
 {
     this->_data->assets.LoadTexture("ANT", ANT_TEXTURE_FILEPATH);
     this->_data->assets.LoadTexture("ANT FOOD", ANT_FOOD_TEXTURE_FILEPATH);
+    this->_data->assets.LoadTexture("FOOD", FOOD_TEXTURE_FILEPATH);
+    this->_data->assets.LoadTexture("NEST", NEST_TEXTURE_FILEPATH);
+
+    //this->_data->food = new Food(_data);
+
+    //this->food = new Food(_data); // = new Food(_data);
 
     std::ifstream readFile;
     readFile.open(this->_data->level);
@@ -22,11 +28,19 @@ void GameState::Init()
         {
             for(int y = 0; y < HEIGHT; y++)
             {
-                _level[x + WIDTH * y] = readFile.get() - '0';
+                this->_level[x + WIDTH * y] = readFile.get() - '0';
+                if(_level[x + WIDTH * y] == 2)
+                {
+                    //std::cout << "food: " << x << " " << y << std::endl; 
+                    Food food(x, y);
+                    food.foodSprite.setTexture(_data->assets.GetTexture("FOOD"));
+                    this->_data->food.push_back(food); //_food->push_back(food);
+                    this->_level[x + WIDTH * y] = 0;
+                }
             }
         }
     }
-    
+
     readFile.close();
 
     if (!_map.load("Assets/Graphics/tileMap.png", sf::Vector2u(TILE_SIZE, TILE_SIZE), _level, WIDTH, HEIGHT))
@@ -50,21 +64,38 @@ void GameState::HandleInput()
         {
             this->_data->window.close();
         }
+
+        if(event.type == sf::Event::KeyPressed)
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
+            {
+                _start = !_start;
+                //std::cout << _start << std::endl;
+                break;
+            }
+
     }
 }
 
 void GameState::Update( float dt )
 {
-    for( unsigned short int i = 0; i < _colony.size(); i++)
-    {   
-        _colony.at(i)->colonySimulate(dt);
-    }
+    if(_start)
+        for( unsigned short int i = 0; i < _colony.size(); i++)
+        {   
+            _colony.at(i)->colonySimulate(dt);
+            _colony.at(i)->pheromoneSimulate(dt);
+        }
 }
 
 void GameState::Draw(float dt)
 {
     this->_data->window.clear();
     this->_data->window.draw(_map);
+
+    for(int i = 0; i < this->_data->food.size(); i++)
+    {
+        this->_data->window.draw(this->_data->food.at(i).foodSprite);
+    }
+
     for( unsigned short int i = 0; i < NUM_COLONIES; i++)
     {
         _colony.at(i)->drawColony();

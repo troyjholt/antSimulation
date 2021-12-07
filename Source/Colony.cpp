@@ -12,17 +12,31 @@ Colony::Colony( GameDataRef data , int ID) : _data( data )
             for(int y = 0; y < HEIGHT; y++)
             {
                 grid[x + WIDTH * y].type = readFile.get() - '0';
-                if(grid[x + WIDTH * y].type == 4)
+                //std::cout << grid[x + WIDTH * y].type << " ";
+                if(grid[x + WIDTH * y].type == 3)
                 {
                     colPos.x = x * TILE_SIZE;
                     colPos.y = y * TILE_SIZE;
                 }
+                else
+                {
+                    grid[x + WIDTH * y].shape.setPosition(x*TILE_SIZE, y*TILE_SIZE);
+                    grid[x + WIDTH * y].shape.setSize(sf::Vector2f(TILE_SIZE,TILE_SIZE));
+                    if(grid[x + WIDTH * y].type == 2)
+                        grid[x + WIDTH * y].type = 0;
+                }
             }
+            //std::cout << std::endl;
         }
         //std::cout << colPos.x << " " << colPos.y << std::endl;
     }
 
     readFile.close();
+
+    nest.setTexture(this->_data->assets.GetTexture("NEST"));
+    nest.setOrigin(32.f, 32.f);
+    nest.setScale(0.5,0.5);
+    nest.setPosition(colPos.x, colPos.y);
 
     for(int i = 0; i < COLONY_START_SIZE; i++)
     {
@@ -30,12 +44,32 @@ Colony::Colony( GameDataRef data , int ID) : _data( data )
         ant->setPos(this->colPos);
         ant->colonyID = ID;
         ant->antSprite.setTexture(this->_data->assets.GetTexture("ANT"));
+        //ant->antSprite.setColor(sf::Color::Red);
         _ants.push_back(ant);
     }
 }
 
 void Colony::drawColony()
 {
+    // draws pheromone tiles
+    for(int i = 0; i < WIDTH * HEIGHT; i++)
+    {
+        if(this->grid[i].vision || (this->grid[i].pherFoodAmount > 0) || (this->grid[i].pherHomeAmount > 0))
+        {
+            if(this->grid[i].vision)
+                this->grid[i].shape.setFillColor(sf::Color::Yellow);
+            this->grid[i].vision = false;
+            
+            //std::cout << i << " turned to false" << std::endl;
+            this->_data->window.draw(this->grid[i].shape);
+        }
+        
+    }
+
+    // draws the nest
+    this->_data->window.draw(nest);
+
+    // draws ants
     for(int i = 0; i < _ants.size(); i++)
     {
         this->_data->window.draw(_ants.at(i)->antSprite);
@@ -61,12 +95,35 @@ void Colony::colonySimulate(float dt)
         //float y = 1.0f * sin(rad);
         float x = movement * cos(rad);
         float y = movement * sin(rad);
-        int X = pos.x + x;
-        int Y = pos.y + y;
+        int X = (pos.x + x);
+        int Y = (pos.y + y);
+        int spot = (((X/TILE_SIZE) + WIDTH * (Y/TILE_SIZE)));
+        
+        bool foodDataCheck = false;
+        int foodDataIndex = 0;
 
-        //std::cout << X << " " << Y << " " << (X + WIDTH * Y)/TILE_SIZE << std::endl;
+        //std::cout << spot << std::endl;
+        
+        //std::cout << "spot: " << X/TILE_SIZE << " " << Y/TILE_SIZE << " " << spot << std::endl;
+        if(!hasFood)
+        {
+            for(int j = 0; j < this->_data->food.size(); j++)
+            {
+                //std::cout << "checking food " << std::endl;
 
-        if((this->grid[(X + WIDTH * Y)/TILE_SIZE].type == 4) && (hasFood))
+                if(this->_data->food.at(j).CheckSpot((X/TILE_SIZE), (Y/TILE_SIZE)) == true)
+                {
+                    //std::cout << "found it " << std::endl;
+                    foodDataCheck = true;
+                    foodDataIndex = j;
+                    //std::cout << foodDataCheck << std::endl;
+                }
+                    
+            }
+        }
+        //std::cout << foodDataCheck << std::endl;
+        
+        if((this->grid[spot].type == 3) && (hasFood))
         {
             //std::cout << "we made it" << std::endl;
             pos.x = pos.x + x;
@@ -89,7 +146,26 @@ void Colony::colonySimulate(float dt)
                 //std::cout << "New ant created. # of ants is now: " << antSize << std::endl;
             }
         }
-        else if((this->grid[(X + WIDTH * Y)/TILE_SIZE].type == 0) && (hasFood) && (this->grid[(X + WIDTH * Y)/TILE_SIZE].pherHomeAmount > 0))
+        else if((foodDataCheck) && (!hasFood))
+        {
+            //std::cout << foodDataCheck << std::endl;
+            _ants.at(i)->hasFood = true;
+            _ants.at(i)->antSprite.setTexture(this->_data->assets.GetTexture("ANT FOOD"));
+            _ants.at(i)->pheromoneAmount = 500;
+            
+            if(this->_data->food.at(foodDataIndex).RemoveFood(carryCapacity) <= 0)
+            {
+                this->_data->food.erase(this->_data->food.begin() + foodDataIndex);
+                foodDataCheck = false;
+                foodDataIndex = 0;
+            }
+            //std::cout << "angle should reverse" << std::endl;
+            angle = antReverse(angle);
+            _ants.at(i)->setAngle(angle);
+            _ants.at(i)->antSprite.setPosition(_ants.at(i)->pos);
+            _ants.at(i)->antSprite.setRotation(_ants.at(i)->angle);
+        }
+        else if((this->grid[spot].type == 0) && (hasFood) && (this->grid[spot].pherHomeAmount > 0))
         {
             //temp = averageHomeAngle(ant[i]);
             pos.x = pos.x + x;
@@ -99,7 +175,7 @@ void Colony::colonySimulate(float dt)
             _ants.at(i)->antSprite.setPosition(_ants.at(i)->pos);
             _ants.at(i)->antSprite.setRotation(angle);
         }
-        else if((this->grid[(X + WIDTH * Y)/TILE_SIZE].type == 0) && (!hasFood) && (this->grid[(X + WIDTH * Y)/TILE_SIZE].pherFoodAmount > 0))
+        else if((this->grid[spot].type == 0) && (!hasFood) && (this->grid[spot].pherFoodAmount > 0))
         {
             //temp = averageFoodAngle(ant[i]);
             //std::cout << temp << ' ' <<  this->grid[X][Y].toFoodAngle << std::endl; 
@@ -110,7 +186,7 @@ void Colony::colonySimulate(float dt)
             _ants.at(i)->antSprite.setPosition(_ants.at(i)->pos);
             _ants.at(i)->antSprite.setRotation(angle);
         }
-        else if((this->grid[(X + WIDTH * Y)/TILE_SIZE].type == 0) || ((this->grid[(X + WIDTH * Y)/TILE_SIZE].type == 4) && (!hasFood)))
+        else if((this->grid[spot].type == 0) || ((this->grid[spot].type == 3) && (!hasFood)))
         {
             pos.x = (pos.x + x);
             pos.y = (pos.y + y);
@@ -119,59 +195,124 @@ void Colony::colonySimulate(float dt)
             _ants.at(i)->antSprite.setPosition(_ants.at(i)->pos);
             _ants.at(i)->antSprite.setRotation(_ants.at(i)->angle);
         }
-        else if((this->grid[(X + WIDTH * Y)/TILE_SIZE].type == 2) && (!hasFood))
-        {
-            _ants.at(i)->hasFood = true;
-            _ants.at(i)->antSprite.setTexture(this->_data->assets.GetTexture("ANT FOOD"));
-            _ants.at(i)->pheromoneAmount = 500;
-            this->grid[(X + WIDTH * Y)/TILE_SIZE].foodAmount = this->grid[(X + WIDTH * Y)/TILE_SIZE].foodAmount - this->carryCapacity;
-
-            if(this->grid[(X + WIDTH * Y)/TILE_SIZE].foodAmount <= 0)
-            {
-                this->grid[(X + WIDTH * Y)/TILE_SIZE].foodAmount = 0;
-                this->grid[(X + WIDTH * Y)/TILE_SIZE].type = 0;
-                //map.load("Assets/Graphics/tileMap.png", sf::Vector2u(tileSize, tileSize), level, WIDTH, HEIGHT);
-                //rebuild
-            }
-            angle = antReverse(angle);
-            _ants.at(i)->setAngle(angle);
-            _ants.at(i)->antSprite.setPosition(_ants.at(i)->pos);
-            _ants.at(i)->antSprite.setRotation(_ants.at(i)->angle);
-        }
         else
         {
-            angle = antBounce(*_ants.at(i), X, Y);
+            angle = antBounce(*_ants.at(i), (X/TILE_SIZE), (Y/TILE_SIZE));
             _ants.at(i)->setAngle(angle);
             _ants.at(i)->antSprite.setPosition(_ants.at(i)->pos);
             _ants.at(i)->antSprite.setRotation(_ants.at(i)->angle);
         }
 
-        if((!hasFood) && (_ants.at(i)->pheromoneAmount > 0) && (this->grid[(X + WIDTH * Y)/TILE_SIZE].pherHomeAmount < _ants.at(i)->pheromoneAmount))
+        if((!hasFood) && (_ants.at(i)->pheromoneAmount > 0) && (this->grid[spot].pherHomeAmount < _ants.at(i)->pheromoneAmount))
         {
             _ants.at(i)->pheromoneAmount--;
-            this->grid[(X + WIDTH * Y)/TILE_SIZE].pherHome = true;
+            this->grid[spot].pherHome = true;
             //this->grid[X + WIDTH * Y].time = dt;//elapsed;
-            this->grid[(X + WIDTH * Y)/TILE_SIZE].toHomeAngle = antReverse(angle);
-            this->grid[(X + WIDTH * Y)/TILE_SIZE].pherHomeAmount = _ants.at(i)->pheromoneAmount;
+            this->grid[spot].toHomeAngle = antReverse(angle);
+            this->grid[spot].pherHomeAmount = _ants.at(i)->pheromoneAmount;
         }
-        else if((hasFood) && (_ants.at(i)->pheromoneAmount > 0) && (this->grid[(X + WIDTH * Y)/TILE_SIZE].pherFoodAmount < _ants.at(i)->pheromoneAmount))
+        else if((hasFood) && (_ants.at(i)->pheromoneAmount > 0) && (this->grid[spot].pherFoodAmount < _ants.at(i)->pheromoneAmount))
         {
             _ants.at(i)->pheromoneAmount--;
-            this->grid[(X + WIDTH * Y)/TILE_SIZE].pherFood = true;
+            this->grid[spot].pherFood = true;
             //this->grid[X + WIDTH * Y].time = dt;//elapsed;
-            this->grid[(X + WIDTH * Y)/TILE_SIZE].toFoodAngle = antReverse(angle);
-            this->grid[(X + WIDTH * Y)/TILE_SIZE].pherFoodAmount = _ants.at(i)->pheromoneAmount;
+            this->grid[spot].toFoodAngle = antReverse(angle);
+            this->grid[spot].pherFoodAmount = _ants.at(i)->pheromoneAmount;
         }
 
         //std::cout << X << " " << Y << " " << std::endl;
+    }
+
+    //pheromoneSimulate(dt); // last thing we do is change pheromones
+}
+
+void Colony::pheromoneSimulate(float dt)
+{
+    //std::cout << (this->pherDisolveSpeed * dt) << std::endl;
+
+    for(int x = 0; x < WIDTH; x++)
+    {
+        for(int y = 0; y < HEIGHT; y++)
+        {
+            int spot = (x + WIDTH * y);
+
+            //std::cout << this->grid[spot].pherFoodAmount << " " << this->grid[spot].pherHomeAmount << std::endl;
+            if((this->grid[spot].pherHome == true) && (this->grid[spot].pherFood == true))
+            {
+                int red = 250;
+                int blue = 250;
+
+                if(this->grid[spot].pherHomeAmount < 250)
+                {
+                    red = this->grid[spot].pherHomeAmount;
+                    this->grid[spot].pherHomeAmount--;
+                    if(this->grid[spot].pherHomeAmount <= 0)
+                    {
+                        this->grid[spot].pherHome = false;
+                        this->grid[spot].pherHomeAmount = 0;
+                    }
+                }
+                if(this->grid[spot].pherFoodAmount < 250)
+                {
+                    blue = this->grid[spot].pherFoodAmount;
+                    this->grid[spot].pherFoodAmount--;
+                    if(this->grid[spot].pherFoodAmount <= 0)
+                    {
+                        this->grid[spot].pherFood = false;
+                        this->grid[spot].pherFoodAmount = 0;
+                    }
+                }
+                if(red > blue)
+                    this->grid[spot].shape.setFillColor(sf::Color(red, 0, blue,red));
+                else
+                    this->grid[spot].shape.setFillColor(sf::Color(red, 0, blue,blue));
+            }
+            else if(this->grid[spot].pherHome == true)
+            {
+                //std::cout << this->grid[spot].pherFoodAmount << " " << this->grid[spot].pherHomeAmount << std::endl;
+
+                if(this->grid[spot].pherHomeAmount > 250)
+                    this->grid[spot].shape.setFillColor(sf::Color(250, 0, 0, 250));
+                else
+                    this->grid[spot].shape.setFillColor(sf::Color(250, 0, 0,this->grid[spot].pherHomeAmount));
+                
+                this->grid[spot].shape.setSize(sf::Vector2f(TILE_SIZE,TILE_SIZE));
+                this->grid[spot].shape.setPosition(x * TILE_SIZE, y * TILE_SIZE);
+                this->grid[spot].pherHomeAmount--;
+                if(this->grid[spot].pherHomeAmount <= 0)
+                {
+                    this->grid[spot].pherHome = false;
+                    this->grid[spot].pherHomeAmount = 0;
+                }
+            }
+            else if(this->grid[spot].pherFood == true)
+            {
+                if(this->grid[spot].pherFoodAmount > 250)
+                    this->grid[spot].shape.setFillColor(sf::Color(0, 0, 250, 250));
+                else
+                    this->grid[spot].shape.setFillColor(sf::Color(0, 0, 250,this->grid[spot].pherFoodAmount));
+
+                //this->grid[spot].shape.setFillColor(sf::Color(0, 0, 250,this->grid[spot].pherFoodAmount));
+                this->grid[spot].shape.setSize(sf::Vector2f(TILE_SIZE,TILE_SIZE));
+                this->grid[spot].shape.setPosition(x * TILE_SIZE, y * TILE_SIZE);
+                this->grid[spot].pherFoodAmount--;
+                
+                if(this->grid[spot].pherFoodAmount <= 0)
+                {
+                    this->grid[spot].pherFood = false;
+                    this->grid[spot].pherFoodAmount = 0;
+                }
+            }
+        }
     }
 }
 
 float Colony::findAngle(Ant &A)
 {
+
     int start_X = A.pos.x;//colPos.x; // center point
     int start_Y = A.pos.y;//colPos.y;
-
+    // std::cout << A.pos.x << " " << A.pos.y << std::endl;
     int r = range;
 
     float angle = A.angle;
@@ -196,7 +337,7 @@ float Colony::findAngle(Ant &A)
     int highX;
     int highY;
     int highAmount = 0;
-    float distance = 30.0;
+    float distance = 30;
     int newAngle;
 
     if(A.hasFood)
@@ -205,6 +346,8 @@ float Colony::findAngle(Ant &A)
         {
             for(int y = start_Y - r; y < start_Y + r; y++)
             {
+                int spot = ((x/TILE_SIZE) + WIDTH * (y/TILE_SIZE));
+
                 float deltaX = x - start_X;
                 float deltaY = y - start_Y;
                 float num = atan2(deltaY,deltaX) * 180 / 3.14;
@@ -213,9 +356,14 @@ float Colony::findAngle(Ant &A)
 
                 if(((x-start_X)*(x-start_X) + (y-start_Y)*(y-start_Y) <= r*r) && 
                 (num > sAngle) && (num < eAngle) && 
-                (x > 0) && (x < WIDTH) && (y > 0) && (y < HEIGHT))
+                (x > 0) && ((x/TILE_SIZE) < WIDTH) && (y > 0) && ((y/TILE_SIZE) < HEIGHT))
                 {
-                    if(this->grid[(x + WIDTH * y)/TILE_SIZE].type == 4)
+                    //if(this->grid[spot].type == 0)
+                    //{
+                        this->grid[spot].vision = true;
+                    //}
+
+                    if(this->grid[spot].type == 3)
                     {
                         highX = x;
                         highY = y;
@@ -226,11 +374,11 @@ float Colony::findAngle(Ant &A)
                             newAngle += 360;
                         return newAngle;
                     }
-                    if((this->grid[(x + WIDTH * y)/TILE_SIZE].pherHome == true) && (this->grid[(x + WIDTH * y)/TILE_SIZE].pherHomeAmount > highAmount))
+                    if((this->grid[spot].pherHome == true) && (this->grid[spot].pherHomeAmount > highAmount))
                     {
                         highX = x;
                         highY = y;
-                        highAmount = this->grid[(x + WIDTH * y)/TILE_SIZE].pherHomeAmount;
+                        highAmount = this->grid[spot].pherHomeAmount;
                     }
                 }
             }
@@ -242,6 +390,20 @@ float Colony::findAngle(Ant &A)
         {
             for(int y = start_Y - r; y < start_Y + r; y++)
             {
+                int spot = ((x/TILE_SIZE) + WIDTH * (y/TILE_SIZE));
+                bool foodDataCheck = false;
+                //std::cout << x << " " << y << std::endl;
+
+                for(int j = 0; j < this->_data->food.size(); j++)
+                {
+                    if(this->_data->food.at(j).CheckSpot(x/TILE_SIZE,y/TILE_SIZE))
+                    {
+                        foodDataCheck = true;
+                        //std::cout << foodDataCheck << std::endl;
+                    }
+                        
+                }
+
                 float deltaX = x - start_X;
                 float deltaY = y - start_Y;
                 float num = atan2(deltaY,deltaX) * 180 / 3.14;
@@ -250,9 +412,15 @@ float Colony::findAngle(Ant &A)
 
                 if(((x-start_X)*(x-start_X) + (y-start_Y)*(y-start_Y) <= r*r) && 
                 (num > sAngle) && (num < eAngle) && 
-                (x > 0) && (x < WIDTH) && (y > 0) && (y < HEIGHT))
+                (x > 0) && ((x/TILE_SIZE) < WIDTH) && (y > 0) && ((y/TILE_SIZE) < HEIGHT))
                 {
-                    if(this->grid[(x + WIDTH * y)/TILE_SIZE].type == 2)
+                    //if(this->grid[spot].type == 0)
+                    //{
+                        this->grid[spot].vision = true;
+                    //}
+
+
+                    if(foodDataCheck)
                     {
                         check = true;
                         int newY = highY - start_Y;
@@ -273,15 +441,17 @@ float Colony::findAngle(Ant &A)
                             //std::cout << newAngle << std::endl;
                         }
                     }
-                    else if((this->grid[(x + WIDTH * y)/TILE_SIZE].hasFood == false) && (this->grid[(x + WIDTH * y)/TILE_SIZE].pherFoodAmount > highAmount))
+                    else if((this->grid[spot].hasFood == false) && (this->grid[spot].pherFoodAmount > highAmount))
                     {
                         highX = x;
                         highY = y;
-                        highAmount = this->grid[(x + WIDTH * y)/TILE_SIZE].pherFoodAmount;
+                        highAmount = this->grid[spot].pherFoodAmount;
                         check = true;
                         //calculate angle
-                    }     
+                    } 
                 }
+
+                foodDataCheck = false;  
             }
         }
     }
@@ -323,41 +493,47 @@ float Colony::antBounce(Ant &A, int X, int Y)
 {
 
     float angle = A.getAngle();
-    int startX = A.pos.x;
-    int startY = A.pos.y;
+    int startX = A.pos.x/TILE_SIZE;
+    int startY = A.pos.y/TILE_SIZE;
 
-    std::cout << startX << " " << startY  << " " << X << " " <<  Y << std::endl;
-    if((angle >= 0) && (angle < 90) && (this->grid[(startX + WIDTH * Y)].type != 1))
+    //std::cout << startX << " " << startY  << " " << X << " " <<  Y << std::endl;
+
+    if((angle >= 0) && (angle < 90))
     {
-        angle = angle + 110;
+        if((this->grid[(startX + WIDTH * Y)].type != 1) && (this->grid[(X + WIDTH * startY)].type == 1))
+            angle = rand() % 90 + 90;
+        else if((this->grid[(startX + WIDTH * Y)].type == 1) && (this->grid[(X + WIDTH * startY)].type != 1))
+            angle = rand() % 90 + 270;
+        else
+            angle = antReverse(angle);
     }
-    else if((angle >= 0) && (angle < 90) && (this->grid[(X + WIDTH * startY)].type != 1))
+    else if((angle >= 90) && (angle < 180))
     {
-        angle = angle - 110;
+        if((this->grid[(startX + WIDTH * Y)].type != 1) && (this->grid[(X + WIDTH * startY)].type == 1))
+            angle = rand() % 90 + 1;
+        else if((this->grid[(startX + WIDTH * Y)].type == 1) && (this->grid[(X + WIDTH * startY)].type != 1))
+            angle = rand() % 90 + 180;
+        else
+            angle = antReverse(angle);
     }
-    else if((angle >= 90) && (angle < 180) && (this->grid[(startX + WIDTH * Y)].type != 1))
+    else if((angle >= 180) && (angle < 270))
     {
-        angle = angle - 110;
+        if((this->grid[(startX + WIDTH * Y)].type != 1) && (this->grid[(X + WIDTH * startY)].type == 1))
+            angle = rand() % 90 + 270;
+        else if((this->grid[(startX + WIDTH * Y)].type == 1) && (this->grid[(X + WIDTH * startY)].type != 1))
+            angle = rand() % 90 + 90;
+        else
+            angle = antReverse(angle);
     }
-    else if((angle >= 90) && (angle < 180) && (this->grid[(X + WIDTH * startY)].type != 1))
+    else if((angle >= 270) && (angle <= 360))
     {
-        angle = angle + 110;
-    }
-    else if((angle >= 180) && (angle < 270) && (this->grid[(startX + WIDTH * Y)].type != 1))
-    {
-        angle = angle + 110;
-    }
-    else if((angle >= 180) && (angle < 270) && (this->grid[(X + WIDTH * startY)].type != 1))
-    {
-        angle = angle - 110;
-    }
-    else if((angle >= 270) && (angle <= 360) && (this->grid[(startX + WIDTH * Y)].type != 1))
-    {
-        angle = angle - 110;
-    }
-    else if((angle >= 270) && (angle <= 360) && (this->grid[(X + WIDTH * startY)].type != 1))
-    {
-        angle = angle + 110;
+        if((this->grid[(startX + WIDTH * Y)].type != 1) && (this->grid[(X + WIDTH * startY)].type == 1))
+            angle = rand() % 90 + 180;
+        else if((this->grid[(startX + WIDTH * Y)].type == 1) && (this->grid[(X + WIDTH * startY)].type != 1))
+            angle = rand() % 90 + 1;
+        else
+            angle = antReverse(angle);
+        
     }
 
     if(angle < 0)

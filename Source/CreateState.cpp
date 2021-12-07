@@ -166,7 +166,7 @@ void CreateState::HandleInput()
                         }
                         else if(_bNest)
                         {
-                            this->_level[((pos.x + x)/TILE_SIZE) + WIDTH * ((pos.y + y)/TILE_SIZE)] = 4;
+                            this->_level[((pos.x + x)/TILE_SIZE) + WIDTH * ((pos.y + y)/TILE_SIZE)] = 3;
                         }
 
                     }

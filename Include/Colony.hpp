@@ -5,6 +5,7 @@
 //#include "State.hpp"
 #include "Ant.hpp"
 #include "tile.hpp"
+
 #include "DEFINITIONS.hpp"
 #include <iostream>
 #include <fstream>
@@ -18,6 +19,7 @@ class Colony
 
         void drawColony();
         void colonySimulate(float dt);
+        void pheromoneSimulate(float dt);
         
         int id;
         int colSize = COLONY_START_SIZE;
@@ -25,13 +27,14 @@ class Colony
     private:
         GameDataRef _data;
 
-        int range = 8; // distance of ants view range.
+        int range = 30; // distance of ants view range.
         int rangeWidth = 45; // width of ants view range.
-        int foodReturned = 0;
-        int carryCapacity = 1;
-        int speed = ANT_DEFAULT_SPEED;
+        int foodReturned = 0; // keeps track of food returned to spawn new ant.
+        int carryCapacity = 1; // colonies carrying capacity
+        float speed = ANT_DEFAULT_SPEED; // speed that colony ants can move.
+        float pherDisolveSpeed = PHEROMONE_DEFAULT_DISSOLVE;
 
-        std::vector<Ant *> _ants;
+        std::vector<Ant *> _ants; // list of colony ants
         Ant *ant;
         sf::Vector2f colPos;
 
@@ -39,6 +42,9 @@ class Colony
 
         sf::Texture antTexture;
         sf::Texture antFoodTexture;
+
+        sf::Sprite nest;
+        sf::Texture nestTexture;
 
         //void antSimulate(sf::Time elapsed);
         //void pherSimulate(sf::Time elapsed);
