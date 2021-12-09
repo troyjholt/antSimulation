@@ -132,10 +132,10 @@ void Colony::colonySimulate(float dt)
             _ants.at(i)->hasFood = false;
             _ants.at(i)->pheromoneAmount = 500;
             angle = antReverse(angle);
-            _ants.at(i)->antSprite.setTexture(this->_data->assets.GetTexture("ANT"));
+            //_ants.at(i)->antSprite.setTexture(this->_data->assets.GetTexture("ANT"));
             _ants.at(i)->setAngle(angle);
-            _ants.at(i)->antSprite.setPosition(_ants.at(i)->pos);
-            _ants.at(i)->antSprite.setRotation(_ants.at(i)->angle);
+            //_ants.at(i)->antSprite.setPosition(_ants.at(i)->pos);
+            //_ants.at(i)->antSprite.setRotation(_ants.at(i)->angle);
 
             foodReturned = foodReturned + this->carryCapacity;
             //std::cout << "pheromoneAmount of food in storage: " << foodReturned << std::endl;
@@ -150,7 +150,7 @@ void Colony::colonySimulate(float dt)
         {
             //std::cout << foodDataCheck << std::endl;
             _ants.at(i)->hasFood = true;
-            _ants.at(i)->antSprite.setTexture(this->_data->assets.GetTexture("ANT FOOD"));
+            //_ants.at(i)->antSprite.setTexture(this->_data->assets.GetTexture("ANT FOOD"));
             _ants.at(i)->pheromoneAmount = 500;
             
             if(this->_data->food.at(foodDataIndex).RemoveFood(carryCapacity) <= 0)
@@ -162,8 +162,8 @@ void Colony::colonySimulate(float dt)
             //std::cout << "angle should reverse" << std::endl;
             angle = antReverse(angle);
             _ants.at(i)->setAngle(angle);
-            _ants.at(i)->antSprite.setPosition(_ants.at(i)->pos);
-            _ants.at(i)->antSprite.setRotation(_ants.at(i)->angle);
+            //_ants.at(i)->antSprite.setPosition(_ants.at(i)->pos);
+            //_ants.at(i)->antSprite.setRotation(_ants.at(i)->angle);
         }
         else if((this->grid[spot].type == 0) && (hasFood) && (this->grid[spot].pherHomeAmount > 0))
         {
@@ -172,8 +172,8 @@ void Colony::colonySimulate(float dt)
             pos.y = pos.y + y;
             _ants.at(i)->setPos(pos);
             _ants.at(i)->setAngle(angle);
-            _ants.at(i)->antSprite.setPosition(_ants.at(i)->pos);
-            _ants.at(i)->antSprite.setRotation(angle);
+            //_ants.at(i)->antSprite.setPosition(_ants.at(i)->pos);
+            //_ants.at(i)->antSprite.setRotation(angle);
         }
         else if((this->grid[spot].type == 0) && (!hasFood) && (this->grid[spot].pherFoodAmount > 0))
         {
@@ -183,8 +183,8 @@ void Colony::colonySimulate(float dt)
             pos.y = pos.y + y;
             _ants.at(i)->setPos(pos);
             _ants.at(i)->setAngle(angle);
-            _ants.at(i)->antSprite.setPosition(_ants.at(i)->pos);
-            _ants.at(i)->antSprite.setRotation(angle);
+            //_ants.at(i)->antSprite.setPosition(_ants.at(i)->pos);
+            //_ants.at(i)->antSprite.setRotation(angle);
         }
         else if((this->grid[spot].type == 0) || ((this->grid[spot].type == 3) && (!hasFood)))
         {
@@ -192,15 +192,15 @@ void Colony::colonySimulate(float dt)
             pos.y = (pos.y + y);
             _ants.at(i)->setPos(pos);
             _ants.at(i)->setAngle(angle);
-            _ants.at(i)->antSprite.setPosition(_ants.at(i)->pos);
-            _ants.at(i)->antSprite.setRotation(_ants.at(i)->angle);
+            //_ants.at(i)->antSprite.setPosition(_ants.at(i)->pos);
+            //_ants.at(i)->antSprite.setRotation(_ants.at(i)->angle);
         }
         else
         {
             angle = antBounce(*_ants.at(i), (X/TILE_SIZE), (Y/TILE_SIZE));
             _ants.at(i)->setAngle(angle);
-            _ants.at(i)->antSprite.setPosition(_ants.at(i)->pos);
-            _ants.at(i)->antSprite.setRotation(_ants.at(i)->angle);
+            //_ants.at(i)->antSprite.setPosition(_ants.at(i)->pos);
+            //_ants.at(i)->antSprite.setRotation(_ants.at(i)->angle);
         }
 
         if((!hasFood) && (_ants.at(i)->pheromoneAmount > 0) && (this->grid[spot].pherHomeAmount < _ants.at(i)->pheromoneAmount))

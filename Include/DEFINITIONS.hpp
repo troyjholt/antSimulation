@@ -21,7 +21,8 @@
 #define BUTTON_SMALL_FILEPATH "Assets/Graphics/buttonSmall.png"
 #define BUTTON_SMALL_ACTIVE_FILEPATH "Assets/Graphics/buttonSmallActive.png"
 
-#define ANT_TEXTURE_FILEPATH "Assets/Graphics/ant.png"
+//#define ANT_TEXTURE_FILEPATH "Assets/Graphics/ant.png"
+#define ANT_TEXTURE_FILEPATH "Assets/Graphics/antTextures.png"
 #define ANT_FOOD_TEXTURE_FILEPATH "Assets/Graphics/antFood.png"
 #define FOOD_TEXTURE_FILEPATH "Assets/Graphics/food.png"
 #define NEST_TEXTURE_FILEPATH "Assets/Graphics/nest.png"

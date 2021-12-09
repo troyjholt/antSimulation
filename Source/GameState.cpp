@@ -16,9 +16,7 @@ void GameState::Init()
     this->_data->assets.LoadTexture("FOOD", FOOD_TEXTURE_FILEPATH);
     this->_data->assets.LoadTexture("NEST", NEST_TEXTURE_FILEPATH);
 
-    //this->_data->food = new Food(_data);
-
-    //this->food = new Food(_data); // = new Food(_data);
+    _ar.a_r_texture.loadFromFile("Assets/Graphics/antTextures.png");
 
     std::ifstream readFile;
     readFile.open(this->_data->level);
@@ -45,12 +43,16 @@ void GameState::Init()
 
     if (!_map.load("Assets/Graphics/tileMap.png", sf::Vector2u(TILE_SIZE, TILE_SIZE), _level, WIDTH, HEIGHT))
         return;
+
+    
     
     for( unsigned short int i = 0; i < NUM_COLONIES; i++)
     {
         colony = new Colony(this->_data, i);//Colony colony(this->_data);
         
         _colony.push_back(colony);
+        if(!_ar.load(*_colony.at(i)))
+            return;
     }
 }
 
@@ -83,6 +85,8 @@ void GameState::Update( float dt )
         {   
             _colony.at(i)->colonySimulate(dt);
             _colony.at(i)->pheromoneSimulate(dt);
+            //std::cout << "yes" << std::endl;
+            _ar.update(*_colony.at(i));
         }
 }
 
@@ -90,15 +94,16 @@ void GameState::Draw(float dt)
 {
     this->_data->window.clear();
     this->_data->window.draw(_map);
+    this->_data->window.draw(_ar);
 
-    for(int i = 0; i < this->_data->food.size(); i++)
+/*     for(int i = 0; i < this->_data->food.size(); i++)
     {
         this->_data->window.draw(this->_data->food.at(i).foodSprite);
-    }
+    } */
 
     for( unsigned short int i = 0; i < NUM_COLONIES; i++)
     {
-        _colony.at(i)->drawColony();
+       // _colony.at(i)->drawColony();
     }
     this->_data->window.display();
 }

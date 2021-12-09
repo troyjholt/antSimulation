@@ -11,6 +11,7 @@
 //#include "Colony.hpp"
 //#include "world.hpp"
 #include "TileMap.cpp"
+//#include "AntRenderer.hpp"
 #include "StateMachine.hpp"
 #include "AssetManager.hpp"
 #include "InputManager.hpp"

@@ -24,6 +24,9 @@ class Colony
         int id;
         int colSize = COLONY_START_SIZE;
 
+        std::vector<Ant *> _ants; // list of colony ants
+        Ant *ant;
+
     private:
         GameDataRef _data;
 
@@ -34,8 +37,7 @@ class Colony
         float speed = ANT_DEFAULT_SPEED; // speed that colony ants can move.
         float pherDisolveSpeed = PHEROMONE_DEFAULT_DISSOLVE;
 
-        std::vector<Ant *> _ants; // list of colony ants
-        Ant *ant;
+
         sf::Vector2f colPos;
 
         Tile grid[WIDTH * HEIGHT];

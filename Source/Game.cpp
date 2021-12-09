@@ -17,6 +17,8 @@ void Game::run()
     float currentTime = this->_clock.getElapsedTime().asSeconds();
     float accumulator = 0.0f;
 
+    float checkTime = this->_clock.getElapsedTime().asSeconds();
+
     while (this->_data->window.isOpen())
     {
         this->_data->machine.ProcessStateChanges();
@@ -31,6 +33,8 @@ void Game::run()
 
         currentTime = newTime;
         accumulator += frameTime;
+        
+        //checkTime = this->_clock.getElapsedTime().asSeconds();
 
         while (accumulator >= dt)
         {
@@ -40,8 +44,14 @@ void Game::run()
             accumulator -= dt;
         }
 
+        //checkTime = this->_clock.getElapsedTime().asSeconds() - checkTime;
+        //std::cout << "Update took:  " << checkTime << std::endl;
         interpolation = accumulator / dt;
+        //checkTime = this->_clock.getElapsedTime().asSeconds();
         this->_data->machine.GetActiveState()->Draw(interpolation);
+
+        //checkTime = this->_clock.getElapsedTime().asSeconds() - checkTime;
+        //std::cout << "Draw took:  " << checkTime << std::endl;
     }
 }
 

@@ -6,6 +6,7 @@
 #include "DEFINITIONS.hpp"
 #include "Colony.hpp"
 #include "Food.hpp"
+#include "AntRenderer.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -29,12 +30,17 @@ class GameState : public State
     private:
         GameDataRef _data;
         int _level[WIDTH * HEIGHT];
+
         TileMap _map;
+        AntRenderer _ar;
+
         std::vector<Colony *> _colony;
         //FoodData _food = std::make_shared<std::vector<Food>>();
 
         //Food food;
         Colony *colony;
+
+        
 
         bool _start = false;
 };
