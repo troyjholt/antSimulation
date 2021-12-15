@@ -43,7 +43,7 @@ Colony::Colony( GameDataRef data , int ID) : _data( data )
         ant = new Ant(this->_data);
         ant->setPos(this->colPos);
         ant->colonyID = ID;
-        ant->antSprite.setTexture(this->_data->assets.GetTexture("ANT"));
+        //ant->antSprite.setTexture(this->_data->assets.GetTexture("ANT"));
         //ant->antSprite.setColor(sf::Color::Red);
         _ants.push_back(ant);
     }
@@ -146,24 +146,20 @@ void Colony::colonySimulate(float dt)
                 //std::cout << "New ant created. # of ants is now: " << antSize << std::endl;
             }
         }
-        else if((foodDataCheck) && (!hasFood))
+        else if((foodDataCheck) && (!hasFood)) // ANT FOUND FOOD
         {
-            //std::cout << foodDataCheck << std::endl;
             _ants.at(i)->hasFood = true;
-            //_ants.at(i)->antSprite.setTexture(this->_data->assets.GetTexture("ANT FOOD"));
             _ants.at(i)->pheromoneAmount = 500;
-            
+
             if(this->_data->food.at(foodDataIndex).RemoveFood(carryCapacity) <= 0)
             {
                 this->_data->food.erase(this->_data->food.begin() + foodDataIndex);
                 foodDataCheck = false;
                 foodDataIndex = 0;
             }
-            //std::cout << "angle should reverse" << std::endl;
+
             angle = antReverse(angle);
             _ants.at(i)->setAngle(angle);
-            //_ants.at(i)->antSprite.setPosition(_ants.at(i)->pos);
-            //_ants.at(i)->antSprite.setRotation(_ants.at(i)->angle);
         }
         else if((this->grid[spot].type == 0) && (hasFood) && (this->grid[spot].pherHomeAmount > 0))
         {
@@ -239,12 +235,8 @@ void Colony::pheromoneSimulate(float dt)
             //std::cout << this->grid[spot].pherFoodAmount << " " << this->grid[spot].pherHomeAmount << std::endl;
             if((this->grid[spot].pherHome == true) && (this->grid[spot].pherFood == true))
             {
-                int red = 250;
-                int blue = 250;
-
                 if(this->grid[spot].pherHomeAmount < 250)
                 {
-                    red = this->grid[spot].pherHomeAmount;
                     this->grid[spot].pherHomeAmount--;
                     if(this->grid[spot].pherHomeAmount <= 0)
                     {
@@ -254,7 +246,6 @@ void Colony::pheromoneSimulate(float dt)
                 }
                 if(this->grid[spot].pherFoodAmount < 250)
                 {
-                    blue = this->grid[spot].pherFoodAmount;
                     this->grid[spot].pherFoodAmount--;
                     if(this->grid[spot].pherFoodAmount <= 0)
                     {
@@ -262,20 +253,9 @@ void Colony::pheromoneSimulate(float dt)
                         this->grid[spot].pherFoodAmount = 0;
                     }
                 }
-                if(red > blue)
-                    this->grid[spot].shape.setFillColor(sf::Color(red, 0, blue,red));
-                else
-                    this->grid[spot].shape.setFillColor(sf::Color(red, 0, blue,blue));
             }
             else if(this->grid[spot].pherHome == true)
             {
-                //std::cout << this->grid[spot].pherFoodAmount << " " << this->grid[spot].pherHomeAmount << std::endl;
-
-                if(this->grid[spot].pherHomeAmount > 250)
-                    this->grid[spot].shape.setFillColor(sf::Color(250, 0, 0, 250));
-                else
-                    this->grid[spot].shape.setFillColor(sf::Color(250, 0, 0,this->grid[spot].pherHomeAmount));
-                
                 this->grid[spot].shape.setSize(sf::Vector2f(TILE_SIZE,TILE_SIZE));
                 this->grid[spot].shape.setPosition(x * TILE_SIZE, y * TILE_SIZE);
                 this->grid[spot].pherHomeAmount--;
@@ -287,12 +267,6 @@ void Colony::pheromoneSimulate(float dt)
             }
             else if(this->grid[spot].pherFood == true)
             {
-                if(this->grid[spot].pherFoodAmount > 250)
-                    this->grid[spot].shape.setFillColor(sf::Color(0, 0, 250, 250));
-                else
-                    this->grid[spot].shape.setFillColor(sf::Color(0, 0, 250,this->grid[spot].pherFoodAmount));
-
-                //this->grid[spot].shape.setFillColor(sf::Color(0, 0, 250,this->grid[spot].pherFoodAmount));
                 this->grid[spot].shape.setSize(sf::Vector2f(TILE_SIZE,TILE_SIZE));
                 this->grid[spot].shape.setPosition(x * TILE_SIZE, y * TILE_SIZE);
                 this->grid[spot].pherFoodAmount--;

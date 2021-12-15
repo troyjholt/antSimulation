@@ -7,6 +7,8 @@
 #include "Colony.hpp"
 #include "Food.hpp"
 #include "AntRenderer.hpp"
+#include "FoodRenderer.hpp"
+#include "PheromoneRenderer.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -33,6 +35,8 @@ class GameState : public State
 
         TileMap _map;
         AntRenderer _ar;
+        FoodRenderer _fr;
+        PheromoneRenderer _pr;
 
         std::vector<Colony *> _colony;
         //FoodData _food = std::make_shared<std::vector<Food>>();

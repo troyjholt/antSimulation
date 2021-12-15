@@ -27,6 +27,12 @@ class Colony
         std::vector<Ant *> _ants; // list of colony ants
         Ant *ant;
 
+        sf::Sprite nest;
+        sf::Texture nestTexture;
+
+        Tile grid[WIDTH * HEIGHT];
+
+
     private:
         GameDataRef _data;
 
@@ -40,13 +46,12 @@ class Colony
 
         sf::Vector2f colPos;
 
-        Tile grid[WIDTH * HEIGHT];
+        
 
         sf::Texture antTexture;
         sf::Texture antFoodTexture;
 
-        sf::Sprite nest;
-        sf::Texture nestTexture;
+
 
         //void antSimulate(sf::Time elapsed);
         //void pherSimulate(sf::Time elapsed);
