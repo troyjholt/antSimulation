@@ -5,7 +5,7 @@
 //#include "State.hpp"
 #include "Ant.hpp"
 #include "tile.hpp"
-
+#include "PheromoneRenderer.hpp"
 #include "DEFINITIONS.hpp"
 #include <iostream>
 #include <fstream>
@@ -20,6 +20,8 @@ class Colony
         void drawColony();
         void colonySimulate(float dt);
         void pheromoneSimulate(float dt);
+
+        
         
         int id;
         int colSize = COLONY_START_SIZE;
@@ -30,7 +32,11 @@ class Colony
         sf::Sprite nest;
         sf::Texture nestTexture;
 
-        Tile grid[WIDTH * HEIGHT];
+        Tile *grid[WIDTH * HEIGHT];
+        
+        std::vector<Tile *> _pheromoneList;
+
+        PheromoneRenderer _pr;
 
 
     private:
@@ -51,6 +57,7 @@ class Colony
         sf::Texture antTexture;
         sf::Texture antFoodTexture;
 
+        
 
 
         //void antSimulate(sf::Time elapsed);

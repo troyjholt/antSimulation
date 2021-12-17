@@ -55,10 +55,9 @@ void GameState::Init()
     for( unsigned short int i = 0; i < NUM_COLONIES; i++)
     {
         colony = new Colony(this->_data, i);//Colony colony(this->_data);
+        colony->_pr.load();
         _colony.push_back(colony);
         if(!_ar.load(*_colony.at(i)))
-            return;
-        if(!_pr.load(*_colony.at(i)))
             return;
     }
 }
@@ -75,13 +74,12 @@ void GameState::HandleInput()
         }
 
         if(event.type == sf::Event::KeyPressed)
-            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
-            {
-                _start = !_start;
-                //std::cout << _start << std::endl;
-                break;
-            }
-
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
+        {
+            _start = !_start;
+            //std::cout << _start << std::endl;
+            break;
+        }
     }
 }
 
@@ -94,7 +92,7 @@ void GameState::Update( float dt )
             _colony.at(i)->pheromoneSimulate(dt);
             _fr.update(_data);
             _ar.update(*_colony.at(i));
-            _pr.update(*_colony.at(i));
+            //_colony.at(i)->_pr.update(*_colony.at(i));
         }
 }
 
@@ -102,13 +100,15 @@ void GameState::Draw(float dt)
 {
     this->_data->window.clear();
     this->_data->window.draw(_map);
-    this->_data->window.draw(_pr);
+    
     for( unsigned short int i = 0; i < NUM_COLONIES; i++)
+    {
+        this->_data->window.draw(_colony.at(i)->_pr);
         this->_data->window.draw(_colony.at(i)->nest);
+    }
 
     this->_data->window.draw(_fr);
     this->_data->window.draw(_ar);
-
 
 
     this->_data->window.display();

@@ -12,9 +12,9 @@ class Tile
     public:
         int type = 0;
         bool hasFood = false;
-        bool Walkable = true;
         int foodAmount = 0;
-        sf::RectangleShape shape;
+
+        int arrayPos;
 
         float toFoodAngle;
         float toHomeAngle;
