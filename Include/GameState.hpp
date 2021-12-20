@@ -7,7 +7,7 @@
 #include "Colony.hpp"
 #include "Food.hpp"
 #include "AntRenderer.hpp"
-#include "FoodRenderer.hpp"
+//#include "FoodRenderer.hpp"
 //#include "PheromoneRenderer.hpp"
 #include <iostream>
 #include <fstream>
@@ -31,11 +31,11 @@ class GameState : public State
     
     private:
         GameDataRef _data;
-        int _level[WIDTH * HEIGHT];
+        //int _level[WIDTH * HEIGHT];
 
         TileMap _map;
         AntRenderer _ar;
-        FoodRenderer _fr;
+        //FoodRenderer _fr;
         
 
         std::vector<Colony *> _colony;

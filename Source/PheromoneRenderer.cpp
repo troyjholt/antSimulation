@@ -13,32 +13,6 @@ bool PheromoneRenderer::load()
             sf::Vertex* quad = &p_r_vertices[(x + y * WIDTH) * 4];
 
             int spot = (x + y * WIDTH);
-/* 
-            int alpha;
-            int red, green, blue;
-
-            if(c.grid[spot]->pherFoodAmount > c.grid[spot]->pherHomeAmount)
-                alpha = c.grid[spot]->pherFoodAmount;
-            else if(c.grid[spot]->pherFoodAmount < c.grid[spot]->pherHomeAmount)
-                alpha = c.grid[spot]->pherHomeAmount;
-            else
-                alpha = 0;
-            
-            if(alpha > 255)
-                alpha = 255;
-
-            if(c.grid[spot]->pherFoodAmount > 255)
-                blue = 255;
-            else
-                blue = c.grid[spot]->pherFoodAmount;
-
-            if(c.grid[spot]->pherHomeAmount > 255)
-                red = 255;
-            else
-                red = c.grid[spot]->pherHomeAmount;
-
-            green = 0;
- */
             int red = 0, green = 0, blue = 0, alpha = 0;
             
             sf::Color color(red,green,blue,alpha);
@@ -54,40 +28,50 @@ bool PheromoneRenderer::load()
             quad[1].color = color;
             quad[2].color = color;
             quad[3].color = color;
-            
         }
     }
 
     return true;
 }
 
-void PheromoneRenderer::update(std::vector<Tile *> c)
+
+void PheromoneRenderer::update(std::vector<Tile *> c, int id)
 {
     for(int i = 0; i < c.size(); i++)
     {
-        sf::Vertex* quad = &p_r_vertices[c.at(i)->arrayPos * 4];
+        sf::Vertex* quad = &p_r_vertices[c[i]->arrayPos * 4];
         int red, green = 0, blue, alpha;
 
-        if(c.at(i)->pherFoodAmount > c.at(i)->pherHomeAmount)
-            alpha = c.at(i)->pherFoodAmount;
-        else if(c.at(i)->pherFoodAmount < c.at(i)->pherHomeAmount)
-            alpha = c.at(i)->pherHomeAmount;
+        if(c[i]->pherFoodAmount[id][0] > c[i]->pherHomeAmount[id][0])
+            alpha = c[i]->pherFoodAmount[id][0];
+        else if(c[i]->pherFoodAmount[id][0] < c[i]->pherHomeAmount[id][0])
+            alpha = c[i]->pherHomeAmount[id][0];
         else
             alpha = 0;
         
         if(alpha > 255)
             alpha = 255;
 
-        if(c.at(i)->pherFoodAmount > 255)
+
+
+        if(c[i]->pherFoodAmount[id][0] > 255)
             blue = 255;
         else
-            blue = c.at(i)->pherFoodAmount;
+            blue = c[i]->pherFoodAmount[id][0];
 
-        if(c.at(i)->pherHomeAmount > 255)
+        if(c[i]->pherHomeAmount[id][0] > 255)
             red = 255;
         else
-            red = c.at(i)->pherHomeAmount;
+            red = c[i]->pherHomeAmount[id][0];
 
+/*         if(c[i]->vision == true)
+        {
+            red = 255;
+            green = 255;
+            blue = 0;
+            alpha = 255;
+            //c[i]->vision = false;
+        } */
         sf::Color color(red,green,blue,alpha);
         
         // defining its 4 texture coordinates

@@ -4,6 +4,7 @@
 #define TILE_HPP
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include "DEFINITIONS.hpp"
 /*-----------------------------------------------------------------------------
 ** THIS IS A TILE CLASS
 **---------------------------------------------------------------------------*/
@@ -16,16 +17,17 @@ class Tile
 
         int arrayPos;
 
-        float toFoodAngle;
-        float toHomeAngle;
-        bool pherHome = false;
-        bool pherFood = false;
-        int pherHomeAmount = 0;
-        int pherFoodAmount = 0;
-        bool vision = false;
+        //float toFoodAngle;
+        //float toHomeAngle;
+
+        bool pherHome[NUM_COLONIES][1];// = false;
+        bool pherFood[NUM_COLONIES][1];// = false;
+        int pherHomeAmount[NUM_COLONIES][1];// = 0;
+        int pherFoodAmount[NUM_COLONIES][1];// = 0;
+        //bool vision = false;
 
         //sf::Clock clock;
-        sf::Time time;
+        //sf::Time time;
 };
 
 #endif

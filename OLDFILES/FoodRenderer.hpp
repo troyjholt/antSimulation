@@ -9,6 +9,7 @@ class FoodRenderer : public sf::Drawable, public sf::Transformable
     public:
         bool load(GameDataRef data);
         void update(GameDataRef data);
+        void removeFood(int pos);
         sf::VertexArray f_r_vertices;
         sf::Texture f_r_texture;
     

@@ -15,8 +15,10 @@
 #include "StateMachine.hpp"
 #include "AssetManager.hpp"
 #include "InputManager.hpp"
+#include "DEFINITIONS.hpp"
 
-#include "Food.hpp"
+//#include "Food.hpp"
+#include "tile.hpp"
 //#include "Food.hpp"
 //#include "SplashState.hpp"
 
@@ -28,8 +30,10 @@ struct GameData
     AssetManager assets;
     InputManager input;
 
-    std::string level;
-    std::vector<Food> food;
+    std::string levelName;
+    //std::vector<Food> food;
+    Tile *grid[WIDTH * HEIGHT];
+
 };
 
 typedef std::shared_ptr<GameData> GameDataRef;

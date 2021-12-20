@@ -37,7 +37,7 @@ void MapChoiceState::HandleInput()
         if(_data->input.IsSpriteClicked(_levelButton, sf::Mouse::Left, this->_data->window))
         {
             //std::cout << "Go to game screen" << std::endl;
-            _data->level = "Assets/Levels/test_level.txt";
+            _data->levelName = "Assets/Levels/test_level.txt";
             _data->machine.AddState(StateRef(new GameState(_data)), true);
         }
     }

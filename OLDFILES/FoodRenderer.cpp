@@ -3,8 +3,26 @@
 bool FoodRenderer::load(GameDataRef data)
 {
     f_r_vertices.setPrimitiveType(sf::Quads);
-    f_r_vertices.resize(MAX_FOOD_SIZE * 4);
+    f_r_vertices.resize(HEIGHT * WIDTH * 4);
 
+    for(int x = 0; x < WIDTH; x++)
+    {
+        for(int y = 0; y < HEIGHT; y++)
+        {
+            sf::Vertex* quad = &f_r_vertices[(x + y * WIDTH) * 4];
+            int spot = (x + y * WIDTH);
+
+            quad[0].position = sf::Vector2f(x * TILE_SIZE, y * TILE_SIZE);
+            quad[1].position = sf::Vector2f((x + 1) * TILE_SIZE, y * TILE_SIZE);
+            quad[2].position = sf::Vector2f((x + 1) * TILE_SIZE, (y + 1) * TILE_SIZE);
+            quad[3].position = sf::Vector2f(x * TILE_SIZE, (y + 1) * TILE_SIZE);
+            
+            //quad[0].texCoords = sf::Vector2f(0.f,0.f);
+            //quad[1].texCoords = sf::Vector2f(64.f,0.f);
+            //quad[2].texCoords = sf::Vector2f(64.f,64.f);
+            //quad[3].texCoords = sf::Vector2f(0.f,64.f);
+        }
+    }
     for(int j = 0; j < data->food.size(); j++)
     {   
         // pointer to current ants vertices in vertex array.
@@ -50,4 +68,9 @@ void FoodRenderer::update(GameDataRef data)
         quad[2].texCoords = sf::Vector2f(64.f,64.f);
         quad[3].texCoords = sf::Vector2f(0.f,64.f);
     }
+}
+
+void FoodRenderer::removeFood(int pos)
+{
+    
 }

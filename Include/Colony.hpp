@@ -4,7 +4,7 @@
 //#include "GameState.hpp"
 //#include "State.hpp"
 #include "Ant.hpp"
-#include "tile.hpp"
+//#include "tile.hpp"
 #include "PheromoneRenderer.hpp"
 #include "DEFINITIONS.hpp"
 #include <iostream>
@@ -32,7 +32,7 @@ class Colony
         sf::Sprite nest;
         sf::Texture nestTexture;
 
-        Tile *grid[WIDTH * HEIGHT];
+        //Tile *grid[WIDTH * HEIGHT];
         
         std::vector<Tile *> _pheromoneList;
 
@@ -42,7 +42,7 @@ class Colony
     private:
         GameDataRef _data;
 
-        int range = 30; // distance of ants view range.
+        int range = 15; // distance of ants view range.
         int rangeWidth = 45; // width of ants view range.
         int foodReturned = 0; // keeps track of food returned to spawn new ant.
         int carryCapacity = 1; // colonies carrying capacity

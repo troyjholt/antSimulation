@@ -17,24 +17,31 @@ void GameState::Init()
     this->_data->assets.LoadTexture("NEST", NEST_TEXTURE_FILEPATH);
 
     _ar.a_r_texture.loadFromFile("Assets/Graphics/antTextures.png");
-    _fr.f_r_texture.loadFromFile("Assets/Graphics/food.png");
+    //_fr.f_r_texture.loadFromFile("Assets/Graphics/food.png");
 
     std::ifstream readFile;
-    readFile.open(this->_data->level);
+    readFile.open(this->_data->levelName);
+    //std::cout << "1" << std::endl;
     if(readFile.is_open())
     {
         for(int x = 0; x < WIDTH; x++)
         {
             for(int y = 0; y < HEIGHT; y++)
             {
-                this->_level[x + WIDTH * y] = readFile.get() - '0';
-                if(_level[x + WIDTH * y] == 2)
+                int spot = x + y * WIDTH;
+                this->_data->grid[spot] = new Tile();
+                this->_data->grid[spot]->type = readFile.get() - '0';
+                this->_data->grid[spot]->arrayPos = spot;
+
+                if(this->_data->grid[spot]->type == 2)
+                    this->_data->grid[spot]->foodAmount = FOOD_DEFAULT_AMOUNT;
+                //std::cout << "2" << std::endl;
+                for(int i = 0; i < NUM_COLONIES; i++)
                 {
-                    //std::cout << "food: " << x << " " << y << std::endl; 
-                    Food food(x, y);
-                    //food.foodSprite.setTexture(_data->assets.GetTexture("FOOD"));
-                    this->_data->food.push_back(food); //_food->push_back(food);
-                    this->_level[x + WIDTH * y] = 0;
+                    this->_data->grid[spot]->pherHome[i][0] = false;
+                    this->_data->grid[spot]->pherFood[i][0] = false;
+                    this->_data->grid[spot]->pherFoodAmount[i][0] = 0;
+                    this->_data->grid[spot]->pherHomeAmount[i][0] = 0;
                 }
             }
         }
@@ -42,12 +49,15 @@ void GameState::Init()
 
     readFile.close();
 
-
-    if (!_map.load("Assets/Graphics/tileMap.png", sf::Vector2u(TILE_SIZE, TILE_SIZE), _level, WIDTH, HEIGHT))
+    //std::cout << "3" << std::endl;
+    if (!_map.load("Assets/Graphics/tileMap.png", sf::Vector2u(TILE_SIZE, TILE_SIZE), (Tile *) &_data->grid, WIDTH, HEIGHT))
         return;
 
-    if (!_fr.load(this->_data))
-        return;
+    std::cout << "yup 2" << std::endl;
+
+    std::cout << "4" << std::endl;
+/*     if (!_fr.load(this->_data))make
+        return; */
 
 
     
@@ -90,7 +100,7 @@ void GameState::Update( float dt )
         {   
             _colony.at(i)->colonySimulate(dt);
             _colony.at(i)->pheromoneSimulate(dt);
-            _fr.update(_data);
+            //_fr.update(_data);
             _ar.update(*_colony.at(i));
             //_colony.at(i)->_pr.update(*_colony.at(i));
         }
@@ -107,7 +117,7 @@ void GameState::Draw(float dt)
         this->_data->window.draw(_colony.at(i)->nest);
     }
 
-    this->_data->window.draw(_fr);
+    //this->_data->window.draw(_fr);
     this->_data->window.draw(_ar);
 
 
