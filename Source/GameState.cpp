@@ -22,6 +22,7 @@ void GameState::Init()
     std::ifstream readFile;
     readFile.open(this->_data->levelName);
     //std::cout << "1" << std::endl;
+
     if(readFile.is_open())
     {
         for(int x = 0; x < WIDTH; x++)
@@ -29,7 +30,9 @@ void GameState::Init()
             for(int y = 0; y < HEIGHT; y++)
             {
                 int spot = x + y * WIDTH;
+
                 this->_data->grid[spot] = new Tile();
+
                 this->_data->grid[spot]->type = readFile.get() - '0';
                 this->_data->grid[spot]->arrayPos = spot;
 
@@ -43,19 +46,24 @@ void GameState::Init()
                     this->_data->grid[spot]->pherFoodAmount[i][0] = 0;
                     this->_data->grid[spot]->pherHomeAmount[i][0] = 0;
                 }
+
+                //std::cout << this->_data->grid[spot]->type << " ";
             }
+            //std::cout << std::endl;
         }
     }
+    //int size = sizeof(this->_data->grid) << std::endl;
+    //std::cout << this->_data->grid->size() << std::endl;
 
     readFile.close();
 
     //std::cout << "3" << std::endl;
-    if (!_map.load("Assets/Graphics/tileMap.png", sf::Vector2u(TILE_SIZE, TILE_SIZE), (Tile *) &_data->grid, WIDTH, HEIGHT))
+    if (!_map.load("Assets/Graphics/tileMap.png", sf::Vector2u(TILE_SIZE, TILE_SIZE), _data->grid, WIDTH, HEIGHT))
         return;
 
-    std::cout << "yup 2" << std::endl;
+    //std::cout << "yup 2" << std::endl;
 
-    std::cout << "4" << std::endl;
+    //std::cout << "4" << std::endl;
 /*     if (!_fr.load(this->_data))make
         return; */
 

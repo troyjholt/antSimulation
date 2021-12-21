@@ -7,7 +7,7 @@ class TileMap : public sf::Drawable, public sf::Transformable
 {
 public:
 
-    bool load(const std::string& tileset, sf::Vector2u tileSize, Tile* tiles, unsigned int width, unsigned int height)
+    bool load(const std::string& tileset, sf::Vector2u tileSize, Tile* tiles[], unsigned int width, unsigned int height)
     {
         
         // load the tileset texture
@@ -23,10 +23,14 @@ public:
         {
             for (unsigned int j = 0; j < height; ++j)
             {
-                
+                int spot = i + j * WIDTH;
                 // get the current tile number
-                int tileNumber = tiles[i + j * width].type ;// tiles[i + j * width]->type;
-                if(tileNumber = 3)
+                //std::cout << tiles[spot]->hasFood << std::endl;
+
+                int tileNumber = tiles[spot]->type; // tiles[i + j * width]->type;
+
+                //std::cout << tileNumber << std::endl;
+                if(tileNumber == 3)
                     tileNumber = 0;
 
                 // find its position in the tileset texture
@@ -48,10 +52,10 @@ public:
                 quad[1].texCoords = sf::Vector2f((tu + 1) * tileSize.x, tv * tileSize.y);
                 quad[2].texCoords = sf::Vector2f((tu + 1) * tileSize.x, (tv + 1) * tileSize.y);
                 quad[3].texCoords = sf::Vector2f(tu * tileSize.x, (tv + 1) * tileSize.y);
-                std::cout << j << std::endl;
+                //std::cout << tiles[spot].type << std::endl;
                 
             }
-            std::cout << "yup 1" << std::endl;
+            //std::cout << "yup 1" << std::endl;
             
         }
         

@@ -57,7 +57,7 @@ void CreateState::Init()
     
     readFile.close();
 
-    if (!_map.load("Assets/Graphics/tileMap.png", sf::Vector2u(TILE_SIZE, TILE_SIZE), (Tile *) &_data->grid, WIDTH, HEIGHT))
+    if (!_map.load("Assets/Graphics/tileMap.png", sf::Vector2u(TILE_SIZE, TILE_SIZE),_data->grid, WIDTH, HEIGHT))
         return;
 }
 
@@ -173,7 +173,7 @@ void CreateState::HandleInput()
                 }
             }
 
-            if (!_map.load("Assets/Graphics/tileMap.png", sf::Vector2u(TILE_SIZE, TILE_SIZE), (Tile *) &_data->grid, WIDTH, HEIGHT))
+            if (!_map.load("Assets/Graphics/tileMap.png", sf::Vector2u(TILE_SIZE, TILE_SIZE), _data->grid, WIDTH, HEIGHT))
                 return;
         }
     }

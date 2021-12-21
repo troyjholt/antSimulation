@@ -7,6 +7,8 @@
 #include "Colony.hpp"
 #include "Food.hpp"
 #include "AntRenderer.hpp"
+#include "TileMap.cpp"
+#include "tile.hpp"
 //#include "FoodRenderer.hpp"
 //#include "PheromoneRenderer.hpp"
 #include <iostream>
