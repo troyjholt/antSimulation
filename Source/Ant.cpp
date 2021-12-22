@@ -21,15 +21,15 @@ void Ant::setAngle(float mAngle)
 {
     angle = mAngle;
     //antSprite.setRotation(mAngle);
-    antSprite.rotate(mAngle);
+    //antSprite.rotate(mAngle);
     //std::cout << angle << ' ' << mAngle << std::endl;
 }
 
 void Ant::setPos(sf::Vector2f mPos)
 {
-    pos.x = mPos.x;
-    pos.y = mPos.y;
-    antSprite.setPosition(mPos);
+    pos.x = mPos.x;// + 4;
+    pos.y = mPos.y;// + 4;
+    //antSprite.setPosition(mPos);
 }
 
 /* void Ant::setPos(sf::Vector2f position)

@@ -10,8 +10,10 @@ class PheromoneRenderer : public sf::Drawable, public sf::Transformable
 {
     public:
         bool load();
-        void update(std::vector<Tile *> c, int id);
+        void update(std::vector<int> c, int id, GameDataRef data);
         void removePheromone(int pos);
+        void vision(std::vector<int> c);
+        void removeVision(int pos);
         sf::VertexArray p_r_vertices;
         sf::Texture p_r_texture;
     

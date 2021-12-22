@@ -64,7 +64,7 @@ public:
     }
 
 
-    void removeFood(int pos, Tile* tiles)
+    void removeFood(int pos)
     {
         sf::Vertex* quad = &m_vertices[pos * 4];
 

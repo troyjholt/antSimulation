@@ -33,7 +33,7 @@ struct GameData
     std::string levelName;
     //std::vector<Food> food;
     Tile *grid[WIDTH * HEIGHT];
-
+    TileMap map;
 };
 
 typedef std::shared_ptr<GameData> GameDataRef;

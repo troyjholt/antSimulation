@@ -17,7 +17,6 @@ class Colony
     public:
         Colony(GameDataRef data, int ID);
 
-        void drawColony();
         void colonySimulate(float dt);
         void pheromoneSimulate(float dt);
 
@@ -34,15 +33,18 @@ class Colony
 
         //Tile *grid[WIDTH * HEIGHT];
         
-        std::vector<Tile *> _pheromoneList;
+        //std::vector<Tile *> _pheromoneList;
 
+        std::vector<int> _visionList;
+
+        std::vector<int> _pheromoneList;
         PheromoneRenderer _pr;
 
 
     private:
         GameDataRef _data;
 
-        int range = 15; // distance of ants view range.
+        int range = 30; // distance of ants view range.
         int rangeWidth = 45; // width of ants view range.
         int foodReturned = 0; // keeps track of food returned to spawn new ant.
         int carryCapacity = 1; // colonies carrying capacity
@@ -62,7 +64,8 @@ class Colony
 
         //void antSimulate(sf::Time elapsed);
         //void pherSimulate(sf::Time elapsed);
-        float findAngle(Ant &A);
+        float findFood(Ant &A, float dt);
+        float findHome(Ant &A, float dt);
         float antReverse(float angle);
         float antBounce(Ant &A, int X, int Y);
 };

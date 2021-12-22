@@ -37,8 +37,11 @@ void GameState::Init()
                 this->_data->grid[spot]->arrayPos = spot;
 
                 if(this->_data->grid[spot]->type == 2)
+                {
                     this->_data->grid[spot]->foodAmount = FOOD_DEFAULT_AMOUNT;
-                //std::cout << "2" << std::endl;
+                    this->_data->grid[spot]->hasFood = true;
+                }
+
                 for(int i = 0; i < NUM_COLONIES; i++)
                 {
                     this->_data->grid[spot]->pherHome[i][0] = false;
@@ -58,7 +61,7 @@ void GameState::Init()
     readFile.close();
 
     //std::cout << "3" << std::endl;
-    if (!_map.load("Assets/Graphics/tileMap.png", sf::Vector2u(TILE_SIZE, TILE_SIZE), _data->grid, WIDTH, HEIGHT))
+    if (!this->_data->map.load("Assets/Graphics/tileMap.png", sf::Vector2u(TILE_SIZE, TILE_SIZE), _data->grid, WIDTH, HEIGHT))
         return;
 
     //std::cout << "yup 2" << std::endl;
@@ -106,10 +109,10 @@ void GameState::Update( float dt )
     if(_start)
         for( unsigned short int i = 0; i < _colony.size(); i++)
         {   
-            _colony.at(i)->colonySimulate(dt);
-            _colony.at(i)->pheromoneSimulate(dt);
+            _colony[i]->colonySimulate(dt);
+            _colony[i]->pheromoneSimulate(dt);
             //_fr.update(_data);
-            _ar.update(*_colony.at(i));
+            _ar.update(*_colony[i]);
             //_colony.at(i)->_pr.update(*_colony.at(i));
         }
 }
@@ -117,12 +120,12 @@ void GameState::Update( float dt )
 void GameState::Draw(float dt)
 {
     this->_data->window.clear();
-    this->_data->window.draw(_map);
+    this->_data->window.draw(this->_data->map);
     
     for( unsigned short int i = 0; i < NUM_COLONIES; i++)
     {
-        this->_data->window.draw(_colony.at(i)->_pr);
-        this->_data->window.draw(_colony.at(i)->nest);
+        this->_data->window.draw(_colony[i]->_pr);
+        this->_data->window.draw(_colony[i]->nest);
     }
 
     //this->_data->window.draw(_fr);

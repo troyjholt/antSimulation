@@ -35,7 +35,7 @@ class GameState : public State
         GameDataRef _data;
         //int _level[WIDTH * HEIGHT];
 
-        TileMap _map;
+        //TileMap _map;
         AntRenderer _ar;
         //FoodRenderer _fr;
         

@@ -50,7 +50,13 @@ void CreateState::Init()
         {
             for(int y = 0; y < HEIGHT; y++)
             {
-                _level[x + WIDTH * y] = readFile.get() - '0';
+                int spot = x + y * WIDTH;
+
+                this->_data->grid[spot] = new Tile();
+
+                this->_data->grid[spot]->type = readFile.get() - '0';
+                this->_data->grid[spot]->arrayPos = spot;
+                //_level[x + WIDTH * y] = readFile.get() - '0';
             }
         }
     }
@@ -128,7 +134,7 @@ void CreateState::HandleInput()
             {
                 for(int y = 0; y < HEIGHT; y++)
                 {
-                    readFile << _level[x + WIDTH * y];
+                    readFile << this->_data->grid[x + WIDTH * y]->type;
                 }
             }
             readFile.close();
@@ -152,21 +158,21 @@ void CreateState::HandleInput()
                     {
                         if(sf::Mouse::isButtonPressed(sf::Mouse::Right))
                         {
-                            this->_level[((pos.x + x)/TILE_SIZE) + WIDTH * ((pos.y + y)/TILE_SIZE)] = 0;
+                            this->_data->grid[((pos.x + x)/TILE_SIZE) + WIDTH * ((pos.y + y)/TILE_SIZE)]->type = 0;
                         }
                         else if(_bWall)
                         {
-                            this->_level[((pos.x + x)/TILE_SIZE) + WIDTH * ((pos.y + y)/TILE_SIZE)] = 1;
+                            this->_data->grid[((pos.x + x)/TILE_SIZE) + WIDTH * ((pos.y + y)/TILE_SIZE)]->type = 1;
                             //world->buildWalls(pos, brushSize);
                         }
                         else if(_bFood)
                         {
-                            this->_level[((pos.x + x)/TILE_SIZE) + WIDTH * ((pos.y + y)/TILE_SIZE)] = 2;
+                             this->_data->grid[((pos.x + x)/TILE_SIZE) + WIDTH * ((pos.y + y)/TILE_SIZE)]->type = 2;
                             //world->buildFood(pos, brushSize);
                         }
                         else if(_bNest)
                         {
-                            this->_level[((pos.x + x)/TILE_SIZE) + WIDTH * ((pos.y + y)/TILE_SIZE)] = 3;
+                             this->_data->grid[((pos.x + x)/TILE_SIZE) + WIDTH * ((pos.y + y)/TILE_SIZE)]->type = 3;
                         }
 
                     }

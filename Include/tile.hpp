@@ -22,9 +22,12 @@ class Tile
 
         bool pherHome[NUM_COLONIES][1];// = false;
         bool pherFood[NUM_COLONIES][1];// = false;
-        int pherHomeAmount[NUM_COLONIES][1];// = 0;
-        int pherFoodAmount[NUM_COLONIES][1];// = 0;
-        //bool vision = false;
+        float pherHomeAmount[NUM_COLONIES][1];// = 0;
+        float pherFoodAmount[NUM_COLONIES][1];// = 0;
+        
+        bool vision = false;
+
+        float timeCheck = 0.0f;
 
         //sf::Clock clock;
         //sf::Time time;
