@@ -4,6 +4,7 @@
 #define TILE_HPP
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include "DEFINITIONS.hpp"
 /*-----------------------------------------------------------------------------
 ** THIS IS A TILE CLASS
 **---------------------------------------------------------------------------*/
@@ -12,20 +13,24 @@ class Tile
     public:
         int type = 0;
         bool hasFood = false;
-        bool Walkable = true;
         int foodAmount = 0;
-        sf::RectangleShape shape;
 
-        float toFoodAngle;
-        float toHomeAngle;
-        bool pherHome = false;
-        bool pherFood = false;
-        int pherHomeAmount = 0;
-        int pherFoodAmount = 0;
+        int arrayPos;
+
+        //float toFoodAngle;
+        //float toHomeAngle;
+
+        bool pherHome[NUM_COLONIES][1];// = false;
+        bool pherFood[NUM_COLONIES][1];// = false;
+        float pherHomeAmount[NUM_COLONIES][1];// = 0;
+        float pherFoodAmount[NUM_COLONIES][1];// = 0;
+        
         bool vision = false;
 
+        float timeCheck = 0.0f;
+
         //sf::Clock clock;
-        sf::Time time;
+        //sf::Time time;
 };
 
 #endif
